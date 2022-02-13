@@ -15,7 +15,7 @@ function Options() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn React
+          Learn React Option js
         </a>
       </header>
     </div>
@@ -23,3 +23,4 @@ function Options() {
 }
 
 export default Options;
+
