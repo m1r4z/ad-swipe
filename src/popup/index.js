@@ -150,3 +150,22 @@
 //             ? (console.log("gotten here!"), chrome.storage.sync.set({ s2: !1 }), (document.getElementById("s2").checked = !1))
 //             : (console.log(e.message), (document.getElementById("errorField").childNodes[1].innerHTML = "Something went wrong.. Refresh the popup.."));
 //     });
+
+
+
+
+
+// const storageChangeListener = (changes, area) => {
+// 		console.log(changes, area);
+// 		if (area === "local" && changes[STORAGE_KEY_GET_PROGRESS]) {
+// 			setProgressData(changes[STORAGE_KEY_GET_PROGRESS]?.newValue?.results);
+// 		} else if (area === "local" && changes[STORAGE_KEY_GET_RESULT]) {
+// 			setResults(changes[STORAGE_KEY_GET_RESULT]?.newValue?.results);
+// 		}
+// 	};
+
+// 	useEffect(() => {
+// 		//console.log("miraz");
+// 		addStorageChangeListener(storageChangeListener);
+// 		return () => removeStorageChangeListener(storageChangeListener);
+// 	}, []);
