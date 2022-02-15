@@ -1,5 +1,6 @@
 body {
   margin: 0;
+  background: rgb(245, 245, 245);
 }
 
 .App {
@@ -48,17 +49,18 @@ body{
 
 
 .navbar-container{
+  background: #fff;
+  box-shadow: 0 1px 3px rgb(161, 146, 255);;
+}
+.navbar-container-inner{
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  max-width: 1440px;
   margin: 0 auto;
   padding: 0 25px;
-  background: #fff;
-  box-shadow: 0 1px 3px rgb(161, 146, 255);;
+  max-width: 1440px;
 }
-
 .logo-container{
 	font-size: 28px;
 	font-weight: bold;
@@ -92,4 +94,171 @@ body{
   font-weight: bold;
   border-bottom: 2px solid rgb(96, 70, 255);
 }
+.ads-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+.single-ad-container{
+  background: #fff;
+  border: 1px solid rgb(242, 243, 248);
+  border-radius: 5px;
+  max-width: 420px;
+  padding: 15px 0px;
+  margin: 10px 15px;
+}
 
+.single-ad-container .ad-heading-container{
+  border-bottom: 1px solid rgb(242, 243, 248);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+}
+
+.single-ad-container .logo-title-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.single-ad-container .logo-container{
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.single-ad-container .logo-container img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.single-ad-container .title-container{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  margin-left: 10px;
+}
+.single-ad-container .title-container .sponsored{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+}
+.single-ad-container .title-container .sponsored span{
+  margin-left: 5px;
+}
+
+.single-ad-container .title{
+  font-size: 18px;
+  color: rgb(29, 121, 251);
+  text-decoration: none;
+  line-height: 22px;
+  padding: 0;
+  margin: 0 0 5px 0;
+  cursor: pointer;
+}
+
+.single-ad-container .links-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.single-ad-container .ad-library{
+  text-decoration: none;
+  font-size: 16px;
+  line-height: 16px;
+  color: rgb(29, 121, 251);
+}
+.single-ad-container span{
+  margin: 5px;
+  cursor: pointer;
+}
+
+.single-ad-container .facebook-icon{
+
+}
+
+.single-ad-container .star-icon{
+
+}
+
+.single-ad-container .trash-icon{
+
+}
+
+.single-ad-container .post-image-container{
+  border-bottom: 1px solid rgb(242, 243, 248);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 100%;
+  height: 100%;
+}
+.single-ad-container .post-container{
+  text-align: left;
+  padding: 10px;
+}
+.single-ad-container .image-container{
+  width: 100%;
+  height: 100%;
+}
+
+.single-ad-container .image-container img{
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.single-ad-container .like-comment-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+}
+
+.single-ad-container .like-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+.single-ad-container .like-container span{
+  margin: 0;
+  padding: 0;
+}
+.single-ad-container .like-container .total-count{
+  font-size: 14px;
+  line-height: 14px;
+  margin-left: 10px;
+}
+.single-ad-container .comment-share-view-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+
+.single-ad-container .comment-share-view-container .fb-icon{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+}

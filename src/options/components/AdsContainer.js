@@ -3,10 +3,16 @@ import SingleAd from './SingleAd';
 
 const AdsContainer = () => {
     return (
-        <>
-        "AdsContainer"
-        <SingleAd />
-        </>
+        <div className='ads-container'>
+            <SingleAd />
+            <SingleAd />
+            <SingleAd />
+            <SingleAd />
+            <SingleAd />
+            <SingleAd />
+            <SingleAd />
+            <SingleAd />
+        </div>
     );
 }
 
