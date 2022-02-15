@@ -1,23 +1,16 @@
-import logo from '../logo.svg';
 import './Options.css';
+import Navbar from './components/Navbar';
+import React, { useState } from 'react';
+import AdsContainer from './components/AdsContainer';
 
-function Options() {
+const Options = () =>{
+  const [totalAd, setTotalAd] = useState(0);
+  const [totalAdvertisers, setTotalAdvertisers] = useState(0);
+  const [favoriteAds, setFavoriteAds] = useState(0);
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/options/Options.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React Option js
-        </a>
-      </header>
+      <Navbar totalAd={totalAd} totalAdvertisers={totalAdvertisers} favoriteAds={favoriteAds}/>
+      <AdsContainer />
     </div>
   );
 }

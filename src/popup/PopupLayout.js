@@ -2,10 +2,11 @@ import React from 'react';
 
 const PopupLayout = () => {
     return (
+        <>
         <div>
-            <img src="logo.png" alt="main-pic" style={{width: '155px', height: '48px'}} id="logo"/>
+            <p style={{fontSize: "24px", textAlign: "center", fontWeight: "bold"}}>AD SWIPE</p>
             <div id="metrics_container">
-                <h3 id = "lifeTimeActivityTitle">Lifetime Activity</h3>
+                <h3 id = "lifeTimeActivityTitle" style={{padding: "5px"}}>Lifetime Activity</h3>
                 <div style={{display: 'flex', width:'350px'	}}>
                     <p id="ads_found_label">Ads Found</p>
                     <p id="advertisers_found_label">Advertisers Found</p>
@@ -59,6 +60,7 @@ const PopupLayout = () => {
             <div className = "metrics-switch" style={{position: 'fixed', left: '341px',top: '364px'}}></div>
             <div className="button-switch" id = "button-switch" style={{display:  'none', position: 'fixed', left: '250px',top: '97px'}}></div>
         </div>
+        </>
     );
 }
 

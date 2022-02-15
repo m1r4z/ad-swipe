@@ -12,6 +12,121 @@ code {
     monospace;
 }
 
+
+.navbar-container{
+
+}
+
+.logo-container{
+	font-size: 28px;
+	font-weight: bold;
+}
+
+.nav-list{
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: center;
+	list-style: none;
+}
+
+.nav-list-item{
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .button-switch{
 	border: 1px solid #F2F3F8;
 	width: 0px;
@@ -276,7 +391,7 @@ code {
 	letter-spacing: -0.01em;
 }
 #lifeTimeActivityTitle{
-	border-radius: nullpx;
+	border-radius: 5px;
 	position: fixed;
 	left: 185px;
 	top: 169px;
@@ -288,7 +403,7 @@ code {
 	color: #495683;
 }
 #todaysActivityTitle{
-	border-radius: nullpx;
+	border-radius: 5px;
 	position: fixed;
 	left: 189px;
 	top: 308px;
