@@ -118,310 +118,130 @@ code {
 
 
 
-
-
-
-
-
-
-
-
-
-.button-switch{
-	border: 1px solid #F2F3F8;
-	width: 0px;
-	height: 32px;
-
+.main-container{
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: stretch;
 }
-.metrics-switch{
-	border: 0.5px solid #F2F3F8;
-	width: 0px;
-	height: 44px;
+.logo{
+	font-size: 24px;
+	font-weight: bold;
 }
-.button-container{
-	width: 436px;
-	height: 75px;
-	border: 1px solid #F2F3F8;
-	box-sizing: border-box;
-	border-radius: 12px;
+#metrics_container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    border: none;
 }
-#gotoFacebookLabel{
-	font-family: Rubik;
-	font-style: normal;
-	font-weight: normal;
+.lifeTimeActivityContainer, .todaysActivityContainer{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	margin-bottom: 20px;
+}
+
+.lifeTimeActivityContainer h3, .todaysActivityContainer h3{
+	font-size: 22px;
+}
+.three_fields{
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	border: 1px solid #e6e6e6;
+	padding: 10px 5px;
+	border-radius: 10px;
+}
+.three_fields .container{
+	flex: 1;
+	border-right: 1px solid #e6e6e6;
+	padding: 5px;
+}
+.three_fields .container:last-child{
+	border-right: none;
+}
+.three_fields .container p{
+	font-size: 14px;
+	margin: 0;
+}
+.three_fields .container p.count{
+	margin-bottom: 5px;
+	font-size: 22px;
+	color: #6044ff;
+	font-weight: bold;
+}
+.gotoFacebookLabel{
+	display: none;
 	font-size: 20px;
 	line-height: 24px;
-	position: fixed;
-	width: 361px;
-	height: 24px;
-	left: 3.5em;
-	top: 97px;
-	color: #6e7eb1;
-	text-align: center;
-	letter-spacing: -0.01em;
-
 }
-#facebookLink{
-	font-family: 'Neue Haas Unica';
+.gotoFacebookLabel a{
 	text-decoration: none;
 	color: #6044ff;
 }
-#idText{
-	position: fixed;
-	width: 400px;
-	height: 17px;
-	left: 24em;
-	top: 515px;
-	font-family: Rubik;
+.firstThing{
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	flex: 1;
+	margin: 0 auto;
+	padding: 0;
+}
+.firstThing li{
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+}
+#showAdsLabel{
+	color: #6E7DAF;
 	font-style: normal;
 	font-weight: normal;
-	font-size: 14px;
-	line-height: 17px;
-	color: #6E7DAF;
+	font-size: 16px;
+	line-height: 19px;
+	letter-spacing: -0.01em;
 }
+
+#autoScrollLabel{
+	color: #6E7DAF;
+	font-style: normal;
+	font-weight: normal;
+	font-size: 16px;
+	line-height: 19px;
+	letter-spacing: -0.01em;
+}
+
 #seeCollectedAdsText{
-	font-family: Rubik;
 	font-style: normal;
 	font-weight: 400;
 	font-size: 18px;
 	line-height: 21px;
 	letter-spacing: -0.01em;
-	position: fixed;
-	left: 10em;
-	top: 464.5px;
+	text-decoration: none;
 	color: white;
+	width: 100%;
 }
 #secondThing{
 	display: flex;
 	flex-direction: row;
 	justify-content: center;
 	align-items: center;
-	padding: 18px 161px;
 	text-align:center;
-	position: fixed;
-	left: 1.5em;
-	top: 447px;
-	background: gray;
-	width:296px;
-	height: 56px;
 	background-color: #6046FF;
 	border-radius: 12px;
+	text-decoration: none;
+	width: 100%;
+	margin-top: 20px;
+	margin-bottom: 20px;
 }
-#logo{
-	position: fixed;
-	left: 11em;
-	top: 24px;
-}
-#favorite_ads_metric{
-	position: fixed;
-	left: 20em;
-	top: 221px;
-	font-family: Rubik;
-	font-style: normal;
-	font-weight: bold;
-	font-size: 22px;
-	line-height: 26px;
-	color: #6046FF;
-}
-#favorite_ads_today_metric{
-	position: fixed;
-	width: 45px;
-	height: 26px;
-	left: 20em;
-	top: 360px;
-	font-family: Rubik;
-	font-style: normal;
-	font-weight: bold;
-	font-size: 22px;
-	line-height: 26px;
-	color: #6046FF;
-}
-#favorite_ads_label{
-	position: fixed;
-	left: 26em;
-	top: 255px;
-	font-family: Rubik;
-	font-style: normal;
-	font-weight: normal;
-	font-size: 14px;
-	line-height: 17px;
-	color: #6E7DAF;
-}
-#favorite_ads_today_label{
-	position: fixed;
-	width: 81px;
-	height: 17px;
-	left: 26em;
-	top: 394px;
-	font-family: Rubik;
-	font-style: normal;
-	font-weight: normal;
-	font-size: 14px;
-	line-height: 17px;
-	color: #6E7DAF;
-}
-#advertisers_found_metric{
-	position: fixed;
-	left: 11em;
-	top: 221px;
-	font-family: Rubik;
-	font-style: normal;
-	font-weight: bold;
-	font-size: 22px;
-	line-height: 26px;
-	color: #6046FF;
-}
-#advertisers_found_today_metric{
-	position: fixed;
-	width: 41px;
-	height: 26px;
-	left: 11em;
-	top: 360px;
-	font-family: Rubik;
-	font-style: normal;
-	font-weight: bold;
-	font-size: 22px;
-	line-height: 26px;
-	color: #6046FF;
-}
-#advertisers_found_label{
-	position: fixed;
-	left: 13.5em;
-	top: 255px;
-	color: #6E7DAF;
-	font-family: Rubik;
-	font-style: normal;
-	font-weight: 400;
-	font-size: 14px;
-	line-height: 17px;
-}
-#advertisers_found_today_label{
-	position: fixed;
-	width: 120px;
-	height: 17px;
-	left: 13.5em;
-	top: 394px;
-	color: #6E7DAF;
-	font-family: Rubik;
-	font-style: normal;
-	font-weight: normal;
-	font-size: 14px;
-	line-height: 17px;
-}
-#ads_found_metric{
-	position: fixed;
-	left: 85px;
-	top: 221px;
-	font-family: Rubik;
-	font-style: normal;
-	font-weight: bold;
-	font-size: 22px;
-	line-height: 26px;
-	color: #6046FF;
-}
-#ads_found_today_metric{
-	position: fixed;
-	width: 62px;
-	height: 26px;
-	left: 85px;
-	top: 360px;
-	font-family: Rubik;
-	font-style: normal;
-	font-weight: bold;
-	font-size: 22px;
-	line-height: 26px;
-	color: #6046FF;
-}
-#ads_found_label{
-	width: 70px;
-	height: 17px;
-	position: fixed;
-	left: 61px;
-	top: 255px;
-	font-family: Rubik;
-	font-style: normal;
-	font-weight: normal;
-	font-size: 14px;
-	line-height: 17px;
-	color: #6E7DAF;
-}
-#ads_found_today_label{
-	position: fixed;
-	left: 61px;
-	top: 394px;
-	font-family: Rubik;
-	font-style: normal;
-	font-weight: normal;
-	font-size: 14px;
-	line-height: 17px;
-	color: #6E7DAF;	
-}
-#s1{
-	position: fixed;
-	left: 60px;
-	top: 97px;
-}
-#showAdsLabel{
-	position: fixed;
-	left: 123px;
-	top: 104px;
-	color: #6E7DAF;
-	font-family: Rubik;
-	font-style: normal;
-	font-weight: normal;
-	font-size: 16px;
-	line-height: 19px;
-	letter-spacing: -0.01em;
-}
-#s2{
-	position: fixed;
-	left: 305px;
-	top: 98px;
-}
-#autoScrollLabel{
-	position: fixed;
-	left: 370px;
-	top: 104px;
-	color: #6E7DAF;
-	font-family: Rubik;
-	font-style: normal;
-	font-weight: normal;
-	font-size: 16px;
-	line-height: 19px;
-	letter-spacing: -0.01em;
-}
-#lifeTimeActivityTitle{
-	border-radius: 5px;
-	position: fixed;
-	left: 185px;
-	top: 169px;
-	font-family: 'Rubik';
-	font-style: normal;
-	font-weight: 500;
-	font-size: 20px;
-	line-height: 23.7px;
-	color: #495683;
-}
-#todaysActivityTitle{
-	border-radius: 5px;
-	position: fixed;
-	left: 189px;
-	top: 308px;
-	font-family: Rubik;
-	font-style: normal;
-	font-weight: 500;
-	font-size: 20px;
-	line-height: 23.7px;
-	color: #495683;
-}
-#border-line{
-	position: fixed;
-	width: 436px;
-	height: 0px;
-	left: 32px;
-	top: 145px;
-	border: 1px solid #F2F3F8;
-}
+
+
+
 @supports (-webkit-appearance: none) or (-moz-appearance: none) {
 	 input[type='checkbox'], input[type='radio'] {
 		 --active: #275efe;
@@ -583,3 +403,27 @@ code {
 	}
 }
  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

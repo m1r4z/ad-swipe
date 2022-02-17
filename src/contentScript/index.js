@@ -2,6 +2,13 @@
 //     absolute_url_to_star_png = chrome.runtime.getURL("star.png"),
 //     absolute_url_to_star2_png = chrome.runtime.getURL("star2.png");
 
+// var totalPublications = 1;
+// var totalAdvertisers = 1;
+// var totalFavorites = 1;
+// var totalTodaysPublications = 1;
+// var totalTodaysAdvertisers = 1;
+// var totalTodaysFavorites = 1;
+
 // chrome.storage.local.get(["token"], function (e) {
 //     token = e.token;
 //     var t = document.createElement("script");
@@ -87,26 +94,39 @@
 //         "getChromeData",
 //         function (e) {
 //             var t = JSON.parse(e.detail);
+//             console.log('**************getChromeData**********************');
+//             console.log(e);
+//             console.log(t);
+//             console.log('**************getChromeData**********************');
 //             t.browser_datetime = s() + " " + new Date().toString().match(/([A-Z]+[\+-][0-9]+)/)[1];
 //             t.name, t.url, t.post_id, t.page_id;
 //             (t = { post_id: t.post_id, page_id: t.page_id, browser_datetime: t.browser_datetime, post_raw_data: t.post_raw_data }),
-//                 fetch(ads_endpoint, { headers: { "Content-Type": "application/json", "Extension-Token": endpoint_access_token, "Extension-User-Token": token }, method: "POST", body: JSON.stringify(t) })
-//                     .then((e) => e.json())
-//                     .then((e) => {
-//                         try {
-//                             e &&
-//                                 (chrome.storage.sync.set({
-//                                     publications: e.publications,
-//                                     advertisers: e.advertisers,
-//                                     favorites: e.favorites,
-//                                     todays_publications: e.todays_publications,
-//                                     todays_advertisers: e.todays_advertisers,
-//                                     todays_favorites: e.todays_favorites,
-//                                 }),
-//                                 chrome.runtime.sendMessage({ message: "metrics_were_updated" }));
-//                         } catch (e) {}
-//                     });
-//         },
+//             (chrome.storage.sync.set({
+//                 publications: ++totalPublications,
+//                 advertisers: ++totalAdvertisers,
+//                 favorites: ++totalFavorites,
+//                 todays_publications: ++totalTodaysPublications,
+//                 todays_advertisers: ++totalTodaysAdvertisers,
+//                 todays_favorites: ++totalTodaysFavorites,
+//             }),
+//             chrome.runtime.sendMessage({ message: "metrics_were_updated" }));
+//                 // fetch(ads_endpoint, { headers: { "Content-Type": "application/json", "Extension-Token": endpoint_access_token, "Extension-User-Token": token }, method: "POST", body: JSON.stringify(t) })
+//                 //     .then((e) => e.json())
+//                 //     .then((e) => {
+//                 //         try {
+//                 //             e &&
+//                 //                 (chrome.storage.sync.set({
+//                 //                     publications: e.publications,
+//                 //                     advertisers: e.advertisers,
+//                 //                     favorites: e.favorites,
+//                 //                     todays_publications: e.todays_publications,
+//                 //                     todays_advertisers: e.todays_advertisers,
+//                 //                     todays_favorites: e.todays_favorites,
+//                 //                 }),
+//                 //                 chrome.runtime.sendMessage({ message: "metrics_were_updated" }));
+//                 //         } catch (e) {}
+//                 //     });
+//             },
 //         !1
 //     );
 //     window.addEventListener(
@@ -124,22 +144,31 @@
 //                 (url = 1 == t.state ? favourite_posts_endpoint : favourite_posts_endpoint_unsave),
 //                 (t = { ad_publication: t.ad_publication, browser_datetime: t.browser_datetime }),
 //                 (t = JSON.stringify(t)),
-//                 fetch(url, { headers: { "Content-Type": "application/json", "Extension-Token": endpoint_access_token, "Extension-User-Token": token }, method: "POST", body: t })
-//                     .then((e) => e.json())
-//                     .then((e) => {
-//                         try {
-//                             e &&
-//                                 (chrome.storage.sync.set({
-//                                     publications: e.publications,
-//                                     advertisers: e.advertisers,
-//                                     favorites: e.favorites,
-//                                     todays_publications: e.todays_publications,
-//                                     todays_advertisers: e.todays_advertisers,
-//                                     todays_favorites: e.todays_favorites,
-//                                 }),
-//                                 chrome.runtime.sendMessage({ message: "metrics_were_updated" }));
-//                         } catch (e) {}
-//                     });
+//                 (chrome.storage.sync.set({
+//                     publications: ++totalPublications,
+//                     advertisers: ++totalAdvertisers,
+//                     favorites: ++totalFavorites,
+//                     todays_publications: ++totalTodaysPublications,
+//                     todays_advertisers: ++totalTodaysAdvertisers,
+//                     todays_favorites: ++totalTodaysFavorites,
+//                 }),
+//                 chrome.runtime.sendMessage({ message: "metrics_were_updated" }));
+//                 // fetch(url, { headers: { "Content-Type": "application/json", "Extension-Token": endpoint_access_token, "Extension-User-Token": token }, method: "POST", body: t })
+//                 //     .then((e) => e.json())
+//                 //     .then((e) => {
+//                 //         try {
+//                 //             e &&
+//                 //                 (chrome.storage.sync.set({
+//                 //                     publications: e.publications, 
+//                 //                     advertisers: e.advertisers,
+//                 //                     favorites: e.favorites,
+//                 //                     todays_publications: e.todays_publications,
+//                 //                     todays_advertisers: e.todays_advertisers,
+//                 //                     todays_favorites: e.todays_favorites,
+//                 //                 }),
+//                 //                 chrome.runtime.sendMessage({ message: "metrics_were_updated" }));
+//                 //         } catch (e) {}
+//                 //     });
 //         },
 //         !1
 //     );
@@ -150,22 +179,32 @@
 //             t.post_id, t.page_id;
 //             (t.browser_datetime = s() + " " + new Date().toString().match(/([A-Z]+[\+-][0-9]+)/)[1]),
 //                 chrome.storage.local.get(["token"], function (e) {
-//                     fetch(ads_endpoint, { headers: { "Content-Type": "application/json", "Extension-Token": endpoint_access_token, "Extension-User-Token": e.token }, method: "POST", body: JSON.stringify(t) })
-//                         .then((e) => e.json())
-//                         .then((e) => {
-//                             try {
-//                                 e &&
-//                                     (chrome.storage.sync.set({
-//                                         publications: e.publications,
-//                                         advertisers: e.advertisers,
-//                                         favorites: e.favorites,
-//                                         todays_publications: e.todays_publications,
-//                                         todays_advertisers: e.todays_advertisers,
-//                                         todays_favorites: e.todays_favorites,
-//                                     }),
-//                                     chrome.runtime.sendMessage({ message: "metrics_were_updated" }));
-//                             } catch (e) {}
-//                         });
+
+//                 (chrome.storage.sync.set({
+//                     publications: ++totalPublications,
+//                     advertisers: ++totalAdvertisers,
+//                     favorites: ++totalFavorites,
+//                     todays_publications: ++totalTodaysPublications,
+//                     todays_advertisers: ++totalTodaysAdvertisers,
+//                     todays_favorites: ++totalTodaysFavorites,
+//                 }),
+//                 chrome.runtime.sendMessage({ message: "metrics_were_updated" }));
+//                     // fetch(ads_endpoint, { headers: { "Content-Type": "application/json", "Extension-Token": endpoint_access_token, "Extension-User-Token": e.token }, method: "POST", body: JSON.stringify(t) })
+//                     //     .then((e) => e.json())
+//                     //     .then((e) => {
+//                     //         try {
+//                     //             e &&
+//                     //                 (chrome.storage.sync.set({
+//                     //                     publications: e.publications,
+//                     //                     advertisers: e.advertisers,
+//                     //                     favorites: e.favorites,
+//                     //                     todays_publications: e.todays_publications,
+//                     //                     todays_advertisers: e.todays_advertisers,
+//                     //                     todays_favorites: e.todays_favorites,
+//                     //                 }),
+//                     //                 chrome.runtime.sendMessage({ message: "metrics_were_updated" }));
+//                     //         } catch (e) {}
+//                     //     });
 //                 });
 //         },
 //         !1
@@ -186,11 +225,6 @@
 //             }\
 //             lastTimerId = setTimeout(runAutoScrollChecks, time_to_check_for_posts);\
 //             console.log("resetTheTimer");\
-//         console.log("seenAds = ", seenAds);\
-//         console.log("statesOfTheAds = ",statesOfTheAds);\
-//         console.log("firstArrayOfButtons = ",firstArrayOfButtons);\
-//         console.log("secondArrayOfButtons = ",secondArrayOfButtons);\
-//         console.log("postsInnerHtml = ",postsInnerHtml);\
 //         }\
 //         function runAutoScrollChecks() {\
 //             if(seenAds.length > min_amount_of_posts_to_refresh) {\
@@ -200,11 +234,6 @@
 //                 window.dispatchEvent(new CustomEvent("stopTheScroll"));\
 //             }\
 //             console.log("runAutoScrollChecks");\
-//         console.log("seenAds = ", seenAds);\
-//         console.log("statesOfTheAds = ",statesOfTheAds);\
-//         console.log("firstArrayOfButtons = ",firstArrayOfButtons);\
-//         console.log("secondArrayOfButtons = ",secondArrayOfButtons);\
-//         console.log("postsInnerHtml = ",postsInnerHtml);\
 //         }\
 //         function wait_and_attach(each, toCheckFor, state) {\
 //             setTimeout(() => {\
@@ -250,11 +279,6 @@
 //                 });\
 //             }, 2500);\
 //             console.log("wait_and_attach");\
-//         console.log("seenAds = ", seenAds);\
-//         console.log("statesOfTheAds = ",statesOfTheAds);\
-//         console.log("firstArrayOfButtons = ",firstArrayOfButtons);\
-//         console.log("secondArrayOfButtons = ",secondArrayOfButtons);\
-//         console.log("postsInnerHtml = ",postsInnerHtml);\
 //         }\
 //         let scripts = document.querySelectorAll("script");\
 //         scripts.forEach(function(each) {\
@@ -288,11 +312,6 @@
 //                 }\
 //             });\
 //             console.log("runACheck");\
-//         console.log("seenAds = ", seenAds);\
-//         console.log("statesOfTheAds = ",statesOfTheAds);\
-//         console.log("firstArrayOfButtons = ",firstArrayOfButtons);\
-//         console.log("secondArrayOfButtons = ",secondArrayOfButtons);\
-//         console.log("postsInnerHtml = ",postsInnerHtml);\
 //         }\
 //         var mutObserver11 = new MutationObserver(function(mutations) {\
 //             mutations.forEach(function(mutation) {\
@@ -309,11 +328,6 @@
 //                 }\
 //             });\
 //             console.log("mutObserver11");\
-//         console.log("seenAds = ", seenAds);\
-//         console.log("statesOfTheAds = ",statesOfTheAds);\
-//         console.log("firstArrayOfButtons = ",firstArrayOfButtons);\
-//         console.log("secondArrayOfButtons = ",secondArrayOfButtons);\
-//         console.log("postsInnerHtml = ",postsInnerHtml);\
 //         });\
 //         var feeditself = document.querySelector(\'[role="feed"]\');\
 //         mutObserver11.observe(feeditself, {\
@@ -362,17 +376,7 @@
 //             } catch (e) {\
 //             }\
 //             console.log("createAButton");\
-//         console.log("seenAds = ", seenAds);\
-//         console.log("statesOfTheAds = ",statesOfTheAds);\
-//         console.log("firstArrayOfButtons = ",firstArrayOfButtons);\
-//         console.log("secondArrayOfButtons = ",secondArrayOfButtons);\
-//         console.log("postsInnerHtml = ",postsInnerHtml);\
 //         }\
-//         console.log("seenAds = ", seenAds);\
-//         console.log("statesOfTheAds = ",statesOfTheAds);\
-//         console.log("firstArrayOfButtons = ",firstArrayOfButtons);\
-//         console.log("secondArrayOfButtons = ",secondArrayOfButtons);\
-//         console.log("postsInnerHtml = ",postsInnerHtml);\
 //     '),
 //     (r.innerHTML =
 //         "\
@@ -393,6 +397,13 @@
 //                                         var page_id = ad['data']['node']['comet_sections']['context_layout']['story']['comet_sections']['actor_photo']['story']['actors'][0]['id'];\
 //                                         var name = ad['data']['node']['comet_sections']['context_layout']['story']['comet_sections']['title']['story']['actors'][0]['name'];\
 //                                         var url = ad['data']['node']['comet_sections']['context_layout']['story']['comet_sections']['title']['story']['actors'][0]['url'];\
+//                                         var text = ad['data']['node']['comet_sections']['content']['story']['comet_sections']['message']['story']['message']['text'];\
+//                                         var imageUrl = ad['data']['node']['comet_sections']['content']['story']['attachments'][0]['styles']['attachment']['media']['flexible_height_share_image']['uri'];\
+//                                         var footerDescriptionText = ad['data']['node']['comet_sections']['content']['story']['attachments'][0]['comet_footer_renderer']['attachment']['description']['text'];\
+//                                         var footerDomainName = ad['data']['node']['comet_sections']['content']['story']['attachments'][0]['comet_footer_renderer']['attachment']['source']['text'];\
+//                                         var likeCount = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target_with_context']['ufi_renderer']['feedback']['comet_ufi_summary_and_actions_renderer']['feedback']['reaction_count']['count'];\
+//                                         var commentCount = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target']['display_comments_count']['count'];\
+//                                         var shareCount = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target_with_context']['ufi_renderer']['feedback']['comet_ufi_summary_and_actions_renderer']['feedback']['share_count']['count'];\
 //                                         createAButton(\
 //                                             post_id.toString(),\
 //                                             page_id.toString(),\
@@ -405,7 +416,15 @@
 //                                             page_id: page_id,\
 //                                             name: name,\
 //                                             url: url,\
-//                                             post_raw_data: JSON.stringify(ad)\
+//                                             text: text,\
+//                                             imageUrl: imageUrl,\
+//                                             footerDescriptionText: footerDescriptionText,\
+//                                             footerDomainName: footerDomainName,\
+//                                             likeCount: likeCount,\
+//                                             commentCount: commentCount,\
+//                                             shareCount: shareCount,\
+//                                             post_raw_data: JSON.stringify(ad),\
+//                                             ad: ad\
 //                                         };\
 //                                         window.dispatchEvent(new CustomEvent(\"getChromeData\", {\
 //                                             detail: JSON.stringify(thing)\
@@ -415,6 +434,13 @@
 //                                         var page_id = ad['data'][\"viewer\"][\"news_feed\"][\"edges\"][0]['node']['comet_sections']['context_layout']['story']['comet_sections']['actor_photo']['story']['actors'][0]['id'];\
 //                                         var name = ad['data'][\"viewer\"][\"news_feed\"][\"edges\"][0]['node']['comet_sections']['context_layout']['story']['comet_sections']['title']['story']['actors'][0]['name'];\
 //                                         var url = ad['data'][\"viewer\"][\"news_feed\"][\"edges\"][0]['node']['comet_sections']['context_layout']['story']['comet_sections']['title']['story']['actors'][0]['url'];\
+//                                         var text = ad['data']['node']['comet_sections']['content']['story']['comet_sections']['message']['story']['message']['text'];\
+//                                         var imageUrl = ad['data']['node']['comet_sections']['content']['story']['attachments'][0]['styles']['attachment']['media']['flexible_height_share_image']['uri'];\
+//                                         var footerDescriptionText = ad['data']['node']['comet_sections']['content']['story']['attachments'][0]['comet_footer_renderer']['attachment']['description']['text'];\
+//                                         var footerDomainName = ad['data']['node']['comet_sections']['content']['story']['attachments'][0]['comet_footer_renderer']['attachment']['source']['text'];\
+//                                         var likeCount = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target_with_context']['ufi_renderer']['feedback']['comet_ufi_summary_and_actions_renderer']['feedback']['reaction_count']['count'];\
+//                                         var commentCount = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target']['display_comments_count']['count'];\
+//                                         var shareCount = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target_with_context']['ufi_renderer']['feedback']['comet_ufi_summary_and_actions_renderer']['feedback']['share_count']['count'];\
 //                                         createAButton(\
 //                                             post_id.toString(),\
 //                                             page_id.toString(),\
@@ -427,7 +453,15 @@
 //                                             page_id: page_id,\
 //                                             name: name,\
 //                                             url: url,\
-//                                             post_raw_data: JSON.stringify(ad)\
+//                                             text: text,\
+//                                             imageUrl: imageUrl,\
+//                                             footerDescriptionText: footerDescriptionText,\
+//                                             footerDomainName: footerDomainName,\
+//                                             likeCount: likeCount,\
+//                                             commentCount: commentCount,\
+//                                             shareCount: shareCount,\
+//                                             post_raw_data: JSON.stringify(ad),\
+//                                             ad: ad\
 //                                         };\
 //                                         window.dispatchEvent(new CustomEvent(\"getChromeData\", {\
 //                                             detail: JSON.stringify(thing)\
