@@ -1,6 +1,11 @@
 import React from 'react';
+import { AUTO_SCROLL_MESSAGE } from '../common/constant';
 
 const PopupLayout = () => {
+    const handleAutoScrollSwitch = (e) => {
+        console.log(e);
+        chrome.runtime.sendMessage({query: AUTO_SCROLL_MESSAGE});
+    }
     return (
         <>
         <div className='main-container'>
@@ -12,11 +17,11 @@ const PopupLayout = () => {
             <ul className="firstThing">
                 <li>
                     <input id="s1" type="checkbox" className="switch"/>
-                    <label for="s1" id = "showAdsLabel">Show Ads</label>
+                    <label htmlFor="s1" id = "showAdsLabel">Show Ads</label>
                 </li>
                 <li>
-                    <input id="s2" type="checkbox" className="switch"/>
-                    <label for="s2" id = "autoScrollLabel">Auto Scroll</label>
+                    <input id="s2" type="checkbox" className="switch" onChange={handleAutoScrollSwitch}/>
+                    <label htmlFor="s2" id = "autoScrollLabel">Auto Scroll</label>
                 </li>
             </ul>
             <div id="metrics_container">

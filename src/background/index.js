@@ -1,3 +1,5 @@
+import {AUTO_SCROLL_MESSAGE} from "../common/constant";
+
 // var token = generate_a_random_token();
 // function generate_a_random_token() {
 //     const e = token_characters + token_symbols,
@@ -51,3 +53,12 @@
 //             : "setTheFlickerInactive" == e.message && (chrome.storage.sync.set({ s2: !1 }), console.log("gotten here"), chrome.runtime.sendMessage({ message: "setTheFlickerInactive" }));
 //     }),
 //     setInterval(statusCheck, status_check_time_period);
+
+
+chrome.runtime.onMessage.addListener((request, sender, sendMessage) => {
+    if(request.query === AUTO_SCROLL_MESSAGE) {
+        chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {
+            chrome.tabs.sendMessage(tabs[0].id, request);
+        })
+    }
+});

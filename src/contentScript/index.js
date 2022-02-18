@@ -1,3 +1,20 @@
+import { AUTO_SCROLL_MESSAGE } from '../common/constant';
+import { getDataFromStorage, setDataInStorage } from '../common/storageUtil';
+console.log('contentScript hello')
+
+chrome.runtime.onMessage.addListener((request, sender, sendMessage) => {
+    if(request.query === AUTO_SCROLL_MESSAGE) {
+        scrollCurrentPage();
+    }
+})
+function scrollCurrentPage(){
+    console.log('auto scroll miraz');
+    setDataInStorage("miraz", [{a: "12345"}]).then(res => {
+        getDataFromStorage("miraz").then(res => {
+            console.log(res);
+        });
+    });
+}
 // var token,
 //     absolute_url_to_star_png = chrome.runtime.getURL("star.png"),
 //     absolute_url_to_star2_png = chrome.runtime.getURL("star2.png");

@@ -1,3 +1,4 @@
+console.log('popup hello')
 // function update_metrics() {
 //     chrome.storage.sync.get(["publications"], function (e) {
 //         (document.getElementById("ads_found_metric").innerHTML = numberWithCommas(e.publications)),
