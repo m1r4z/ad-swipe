@@ -1,20 +1,329 @@
-import { AUTO_SCROLL_MESSAGE } from '../common/constant';
-import { getDataFromStorage, setDataInStorage } from '../common/storageUtil';
-console.log('contentScript hello')
+import { AUTO_SCROLL_ON_MESSAGE, AUTO_SCROLL_OFF_MESSAGE, SHOW_AD_OFF_MESSAGE, SHOW_AD_ON_MESSAGE } from "../common/constant";
+import { getDataFromStorage, setDataInStorage } from "../common/storageUtil";
+console.log("contentScript hello");
+
+var state = false;
 
 chrome.runtime.onMessage.addListener((request, sender, sendMessage) => {
-    if(request.query === AUTO_SCROLL_MESSAGE) {
-        scrollCurrentPage();
+    if (request.query === AUTO_SCROLL_ON_MESSAGE) {
+        autoScrollFn("AUTO_SCROLL_ON_MESSAGE");
     }
-})
-function scrollCurrentPage(){
-    console.log('auto scroll miraz');
-    setDataInStorage("miraz", [{a: "12345"}]).then(res => {
-        getDataFromStorage("miraz").then(res => {
-            console.log(res);
-        });
-    });
+    if (request.query === AUTO_SCROLL_OFF_MESSAGE) {
+        autoScrollFn("AUTO_SCROLL_OFF_MESSAGE");
+    }
+});
+
+function scrollCurrentPage() {
+    console.log("auto scroll miraz");
+    // setDataInStorage("miraz", [{a: "12345"}]).then(res => {
+    //     getDataFromStorage("miraz").then(res => {
+    //         console.log(res);
+    //     });
+    // });
 }
+
+function autoScrollFn(from) {
+    if (from === "AUTO_SCROLL_ON_MESSAGE") {
+        state = true;
+    }
+    if (from === "AUTO_SCROLL_OFF_MESSAGE") {
+        state = false;
+    }
+
+    console.log(from);
+    console.log("state = ", state);
+
+    (function autoScroll() {
+        setTimeout(function () {
+            var height = document.documentElement.scrollHeight;
+            window.scrollBy(0, 1000);
+            if (state) {
+                autoScroll();
+            }
+        }, 1000);
+    })();
+}
+
+var totalPublications = 1;
+var totalAdvertisers = 1;
+var totalFavorites = 1;
+var totalTodaysPublications = 1;
+var totalTodaysAdvertisers = 1;
+var totalTodaysFavorites = 1;
+
+// var r = document.createElement("script");
+
+
+// (r.innerHTML ="\
+//     const origOpen = XMLHttpRequest.prototype.open;\
+//     XMLHttpRequest.prototype.open = function() {\
+//         this.addEventListener('load', function() {\
+//             try {\
+//                 var ads = this.responseText.split(\"\\n\");\
+//             } catch (e) { }\
+//             try {\
+//                 ads.forEach(function(ad) {\
+//                     try {\
+//                         ad = JSON.parse(ad);\
+//                         if (ad.label == \"CometNewsFeed_viewer$stream$CometNewsFeed_viewer_news_feed\" || typeof(ad[\"data\"][\"viewer\"][\"news_feed\"][\"edges\"][0][\"category\"]) !== \"undefined\") {\
+//                             if (ad.data.category == \"SPONSORED\" || ad[\"data\"][\"viewer\"][\"news_feed\"][\"edges\"][0][\"category\"] == \"SPONSORED\") {\
+//                                 if (ad.data.category == \"SPONSORED\") {\
+//                                     console.log('SPONSORED');\
+//                                     var post_id = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target_with_context']['ufi_renderer']['feedback']['subscription_target_id'];\
+//                                     console.log('post_id ',post_id);\
+//                                     var page_id = ad['data']['node']['comet_sections']['context_layout']['story']['comet_sections']['actor_photo']['story']['actors'][0]['id'];\
+//                                     console.log('page_id ',page_id);\
+//                                     var name = ad['data']['node']['comet_sections']['context_layout']['story']['comet_sections']['title']['story']['actors'][0]['name'];\
+//                                     console.log('name ',name);\
+//                                     var url = ad['data']['node']['comet_sections']['context_layout']['story']['comet_sections']['title']['story']['actors'][0]['url'];\
+//                                     console.log('url ',url);\
+//                                     var text = ad['data']['node']['comet_sections']['content']['story']['comet_sections']['message']['story']['message']['text'];\
+//                                     console.log('text ',text);\
+//                                     var imageUrl = ad['data']['node']['comet_sections']['content']['story']['attachments'][0]['styles']['attachment']['media']['flexible_height_share_image']['uri'];\
+//                                     console.log('imageUrl ',imageUrl);\
+//                                     var footerDescriptionText = ad['data']['node']['comet_sections']['content']['story']['attachments'][0]['comet_footer_renderer']['attachment']['description']['text'];\
+//                                     console.log('footerDescriptionText ',footerDescriptionText);\
+//                                     var footerDomainName = ad['data']['node']['comet_sections']['content']['story']['attachments'][0]['comet_footer_renderer']['attachment']['source']['text'];\
+//                                     console.log('footerDomainName ',footerDomainName);\
+//                                     var likeCount = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target_with_context']['ufi_renderer']['feedback']['comet_ufi_summary_and_actions_renderer']['feedback']['reaction_count']['count'];\
+//                                     console.log('likeCount ',likeCount);\
+//                                     var commentCount = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target']['display_comments_count']['count'];\
+//                                     console.log('commentCount ',commentCount);\
+//                                     var shareCount = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target_with_context']['ufi_renderer']['feedback']['comet_ufi_summary_and_actions_renderer']['feedback']['share_count']['count'];\
+//                                     console.log('shareCount ',shareCount);\
+//                                     var thing = {\
+//                                         post_id: post_id,\
+//                                         page_id: page_id,\
+//                                         name: name,\
+//                                         url: url,\
+//                                         text: text,\
+//                                         imageUrl: imageUrl,\
+//                                         footerDescriptionText: footerDescriptionText,\
+//                                         footerDomainName: footerDomainName,\
+//                                         likeCount: likeCount,\
+//                                         commentCount: commentCount,\
+//                                         shareCount: shareCount,\
+//                                     };\
+//                                     console.log('**************getChromeData**********************');\
+//                                 } else {\
+//                                     console.log('NOT SPONSORED');\
+//                                     var post_id = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target_with_context']['ufi_renderer']['feedback']['subscription_target_id'];\
+//                                     console.log('post_id ',post_id);\
+//                                     var page_id = ad['data']['node']['comet_sections']['context_layout']['story']['comet_sections']['actor_photo']['story']['actors'][0]['id'];\
+//                                     console.log('page_id ',page_id);\
+//                                     var name = ad['data']['node']['comet_sections']['context_layout']['story']['comet_sections']['title']['story']['actors'][0]['name'];\
+//                                     console.log('name ',name);\
+//                                     var url = ad['data']['node']['comet_sections']['context_layout']['story']['comet_sections']['title']['story']['actors'][0]['url'];\
+//                                     console.log('url ',url);\
+//                                     var text = ad['data']['node']['comet_sections']['content']['story']['comet_sections']['message']['story']['message']['text'];\
+//                                     console.log('text ',text);\
+//                                     var imageUrl = ad['data']['node']['comet_sections']['content']['story']['attachments'][0]['styles']['attachment']['media']['flexible_height_share_image']['uri'];\
+//                                     console.log('imageUrl ',imageUrl);\
+//                                     var footerDescriptionText = ad['data']['node']['comet_sections']['content']['story']['attachments'][0]['comet_footer_renderer']['attachment']['description']['text'];\
+//                                     console.log('footerDescriptionText ',footerDescriptionText);\
+//                                     var footerDomainName = ad['data']['node']['comet_sections']['content']['story']['attachments'][0]['comet_footer_renderer']['attachment']['source']['text'];\
+//                                     console.log('footerDomainName ',footerDomainName);\
+//                                     var likeCount = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target_with_context']['ufi_renderer']['feedback']['comet_ufi_summary_and_actions_renderer']['feedback']['reaction_count']['count'];\
+//                                     console.log('likeCount ',likeCount);\
+//                                     var commentCount = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target']['display_comments_count']['count'];\
+//                                     console.log('commentCount ',commentCount);\
+//                                     var shareCount = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target_with_context']['ufi_renderer']['feedback']['comet_ufi_summary_and_actions_renderer']['feedback']['share_count']['count'];\
+//                                     console.log('shareCount ',shareCount);\
+//                                     var thing = {\
+//                                         post_id: post_id,\
+//                                         page_id: page_id,\
+//                                         name: name,\
+//                                         url: url,\
+//                                         text: text,\
+//                                         imageUrl: imageUrl,\
+//                                         footerDescriptionText: footerDescriptionText,\
+//                                         footerDomainName: footerDomainName,\
+//                                         likeCount: likeCount,\
+//                                         commentCount: commentCount,\
+//                                         shareCount: shareCount,\
+//                                     };\
+//                                     console.log('**************getChromeData**********************');\
+//                                 }\
+//                             }\
+//                         }\
+//                     } catch (e) { }\
+//                 });\
+//             } catch (e) { }\
+//         });\
+//         origOpen.apply(this, arguments);\
+//     };\
+// ")
+
+//     document.body.appendChild(r)
+
+function addScriptForListeningPost(){
+    // const origOpen2 = XMLHttpRequest.prototype.open;
+    // XMLHttpRequest.prototype.open = function() {
+    //     this.addEventListener('load', function() {
+    //         try {
+    //             console.log(this.responseURL);
+    //             var ads = this.responseText.split("\n");
+    //         } catch (e) { }
+    //         try {
+    //             ads.forEach(function(ad) {
+    //                 try {
+    //                     ad = JSON.parse(ad);
+    //                     if (ad.label == "CometNewsFeed_viewer$stream$CometNewsFeed_viewer_news_feed" || typeof(ad["data"]["viewer"]["news_feed"]["edges"][0]["category"]) !== "undefined") {
+    //                         if (ad.data.category == "SPONSORED" || ad["data"]["viewer"]["news_feed"]["edges"][0]["category"] == "SPONSORED") {
+    //                             if (ad.data.category == "SPONSORED") {
+    //                                 console.log('SPONSORED');
+    //                                 var post_id = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target_with_context']['ufi_renderer']['feedback']['subscription_target_id'];
+    //                                 var page_id = ad['data']['node']['comet_sections']['context_layout']['story']['comet_sections']['actor_photo']['story']['actors'][0]['id'];
+    //                                 var name = ad['data']['node']['comet_sections']['context_layout']['story']['comet_sections']['title']['story']['actors'][0]['name'];
+    //                                 var url = ad['data']['node']['comet_sections']['context_layout']['story']['comet_sections']['title']['story']['actors'][0]['url'];
+    //                                 var text = ad['data']['node']['comet_sections']['content']['story']['comet_sections']['message']['story']['message']['text'];
+    //                                 var imageUrl = ad['data']['node']['comet_sections']['content']['story']['attachments'][0]['styles']['attachment']['media']['flexible_height_share_image']['uri'];
+    //                                 var footerDescriptionText = ad['data']['node']['comet_sections']['content']['story']['attachments'][0]['comet_footer_renderer']['attachment']['description']['text'];
+    //                                 var footerDomainName = ad['data']['node']['comet_sections']['content']['story']['attachments'][0]['comet_footer_renderer']['attachment']['source']['text'];
+    //                                 var likeCount = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target_with_context']['ufi_renderer']['feedback']['comet_ufi_summary_and_actions_renderer']['feedback']['reaction_count']['count'];
+    //                                 var commentCount = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target']['display_comments_count']['count'];
+    //                                 var shareCount = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target_with_context']['ufi_renderer']['feedback']['comet_ufi_summary_and_actions_renderer']['feedback']['share_count']['count'];
+    //                                 var thing = {
+    //                                     post_id: post_id,
+    //                                     page_id: page_id,
+    //                                     name: name,
+    //                                     url: url,
+    //                                     text: text,
+    //                                     imageUrl: imageUrl,
+    //                                     footerDescriptionText: footerDescriptionText,
+    //                                     footerDomainName: footerDomainName,
+    //                                     likeCount: likeCount,
+    //                                     commentCount: commentCount,
+    //                                     shareCount: shareCount,
+    //                                 };
+    //                                 console.log(thing);
+    //                             } else {
+    //                                 console.log('NOT SPONSORED');
+    //                                 var post_id = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target_with_context']['ufi_renderer']['feedback']['subscription_target_id'];
+    //                                 var page_id = ad['data']['node']['comet_sections']['context_layout']['story']['comet_sections']['actor_photo']['story']['actors'][0]['id'];
+    //                                 var name = ad['data']['node']['comet_sections']['context_layout']['story']['comet_sections']['title']['story']['actors'][0]['name'];
+    //                                 var url = ad['data']['node']['comet_sections']['context_layout']['story']['comet_sections']['title']['story']['actors'][0]['url'];
+    //                                 var text = ad['data']['node']['comet_sections']['content']['story']['comet_sections']['message']['story']['message']['text'];
+    //                                 var imageUrl = ad['data']['node']['comet_sections']['content']['story']['attachments'][0]['styles']['attachment']['media']['flexible_height_share_image']['uri'];
+    //                                 var footerDescriptionText = ad['data']['node']['comet_sections']['content']['story']['attachments'][0]['comet_footer_renderer']['attachment']['description']['text'];
+    //                                 var footerDomainName = ad['data']['node']['comet_sections']['content']['story']['attachments'][0]['comet_footer_renderer']['attachment']['source']['text'];
+    //                                 var likeCount = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target_with_context']['ufi_renderer']['feedback']['comet_ufi_summary_and_actions_renderer']['feedback']['reaction_count']['count'];
+    //                                 var commentCount = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target']['display_comments_count']['count'];
+    //                                 var shareCount = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target_with_context']['ufi_renderer']['feedback']['comet_ufi_summary_and_actions_renderer']['feedback']['share_count']['count'];
+    //                                 var thing = {
+    //                                     post_id: post_id,
+    //                                     page_id: page_id,
+    //                                     name: name,
+    //                                     url: url,
+    //                                     text: text,
+    //                                     imageUrl: imageUrl,
+    //                                     footerDescriptionText: footerDescriptionText,
+    //                                     footerDomainName: footerDomainName,
+    //                                     likeCount: likeCount,
+    //                                     commentCount: commentCount,
+    //                                     shareCount: shareCount,
+    //                                 };
+    //                                 console.log(thing);
+    //                             }
+    //                         }
+    //                     }
+    //                 } catch (e) { }
+    //             });
+    //         } catch (e) { }
+    //     });
+    //     origOpen2.apply(this, arguments);
+    // };
+
+    
+    console.log('addScriptForListeningPost');
+}
+addScriptForListeningPost();
+
+var r = document.createElement("script");
+
+
+(r.innerHTML ="\
+    const origOpen2 = XMLHttpRequest.prototype.open;\
+    XMLHttpRequest.prototype.open = function() {\
+        this.addEventListener('load', function() {\
+            try {\
+                console.log(this.responseURL);\
+                var ads = this.responseText.split(\"\\n\");\
+            } catch (e) { }\
+            try {\
+                ads.forEach(function(ad) {\
+                    try {\
+                        ad = JSON.parse(ad);\
+                        if (ad.label == \"CometNewsFeed_viewer$stream$CometNewsFeed_viewer_news_feed\" || typeof(ad[\"data\"][\"viewer\"][\"news_feed\"][\"edges\"][0][\"category\"]) !== \"undefined\") {\
+                            if (ad.data.category == \"SPONSORED\" || ad[\"data\"][\"viewer\"][\"news_feed\"][\"edges\"][0][\"category\"] == \"SPONSORED\") {\
+                                if (ad.data.category == \"SPONSORED\") {\
+                                    console.log('SPONSORED');\
+                                    var post_id = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target_with_context']['ufi_renderer']['feedback']['subscription_target_id'];\
+                                    var page_id = ad['data']['node']['comet_sections']['context_layout']['story']['comet_sections']['actor_photo']['story']['actors'][0]['id'];\
+                                    var name = ad['data']['node']['comet_sections']['context_layout']['story']['comet_sections']['title']['story']['actors'][0]['name'];\
+                                    var url = ad['data']['node']['comet_sections']['context_layout']['story']['comet_sections']['title']['story']['actors'][0]['url'];\
+                                    var text = ad['data']['node']['comet_sections']['content']['story']['comet_sections']['message']['story']['message']['text'];\
+                                    var imageUrl = ad['data']['node']['comet_sections']['content']['story']['attachments'][0]['styles']['attachment']['media']['flexible_height_share_image']['uri'];\
+                                    var footerDescriptionText = ad['data']['node']['comet_sections']['content']['story']['attachments'][0]['comet_footer_renderer']['attachment']['description']['text'];\
+                                    var footerDomainName = ad['data']['node']['comet_sections']['content']['story']['attachments'][0]['comet_footer_renderer']['attachment']['source']['text'];\
+                                    var likeCount = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target_with_context']['ufi_renderer']['feedback']['comet_ufi_summary_and_actions_renderer']['feedback']['reaction_count']['count'];\
+                                    var commentCount = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target']['display_comments_count']['count'];\
+                                    var shareCount = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target_with_context']['ufi_renderer']['feedback']['comet_ufi_summary_and_actions_renderer']['feedback']['share_count']['count'];\
+                                    var thing = {\
+                                        post_id: post_id,\
+                                        page_id: page_id,\
+                                        name: name,\
+                                        url: url,\
+                                        text: text,\
+                                        imageUrl: imageUrl,\
+                                        footerDescriptionText: footerDescriptionText,\
+                                        footerDomainName: footerDomainName,\
+                                        likeCount: likeCount,\
+                                        commentCount: commentCount,\
+                                        shareCount: shareCount,\
+                                    };\
+                                    console.log(thing);\
+                                    console.log('**************getChromeData**********************');\
+                                } else {\
+                                    console.log('NOT SPONSORED');\
+                                    var post_id = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target_with_context']['ufi_renderer']['feedback']['subscription_target_id'];\
+                                    var page_id = ad['data']['node']['comet_sections']['context_layout']['story']['comet_sections']['actor_photo']['story']['actors'][0]['id'];\
+                                    var name = ad['data']['node']['comet_sections']['context_layout']['story']['comet_sections']['title']['story']['actors'][0]['name'];\
+                                    var url = ad['data']['node']['comet_sections']['context_layout']['story']['comet_sections']['title']['story']['actors'][0]['url'];\
+                                    var text = ad['data']['node']['comet_sections']['content']['story']['comet_sections']['message']['story']['message']['text'];\
+                                    var imageUrl = ad['data']['node']['comet_sections']['content']['story']['attachments'][0]['styles']['attachment']['media']['flexible_height_share_image']['uri'];\
+                                    var footerDescriptionText = ad['data']['node']['comet_sections']['content']['story']['attachments'][0]['comet_footer_renderer']['attachment']['description']['text'];\
+                                    var footerDomainName = ad['data']['node']['comet_sections']['content']['story']['attachments'][0]['comet_footer_renderer']['attachment']['source']['text'];\
+                                    var likeCount = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target_with_context']['ufi_renderer']['feedback']['comet_ufi_summary_and_actions_renderer']['feedback']['reaction_count']['count'];\
+                                    var commentCount = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target']['display_comments_count']['count'];\
+                                    var shareCount = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target_with_context']['ufi_renderer']['feedback']['comet_ufi_summary_and_actions_renderer']['feedback']['share_count']['count'];\
+                                    var thing = {\
+                                        post_id: post_id,\
+                                        page_id: page_id,\
+                                        name: name,\
+                                        url: url,\
+                                        text: text,\
+                                        imageUrl: imageUrl,\
+                                        footerDescriptionText: footerDescriptionText,\
+                                        footerDomainName: footerDomainName,\
+                                        likeCount: likeCount,\
+                                        commentCount: commentCount,\
+                                        shareCount: shareCount,\
+                                    };\
+                                    console.log(thing);\
+                                    console.log('**************getChromeData**********************');\
+                                }\
+                            }\
+                        }\
+                    } catch (e) { }\
+                });\
+            } catch (e) { }\
+        });\
+        origOpen2.apply(this, arguments);\
+    };\
+")
+
+document.body.appendChild(r)
 // var token,
 //     absolute_url_to_star_png = chrome.runtime.getURL("star.png"),
 //     absolute_url_to_star2_png = chrome.runtime.getURL("star2.png");
@@ -176,7 +485,7 @@ function scrollCurrentPage(){
 //                 //         try {
 //                 //             e &&
 //                 //                 (chrome.storage.sync.set({
-//                 //                     publications: e.publications, 
+//                 //                     publications: e.publications,
 //                 //                     advertisers: e.advertisers,
 //                 //                     favorites: e.favorites,
 //                 //                     todays_publications: e.todays_publications,
@@ -395,106 +704,105 @@ function scrollCurrentPage(){
 //             console.log("createAButton");\
 //         }\
 //     '),
-//     (r.innerHTML =
-//         "\
-//         const origOpen = XMLHttpRequest.prototype.open;\
-//         XMLHttpRequest.prototype.open = function() {\
-//             this.addEventListener('load', function() {\
-//                 try {\
-//                     var ads = this.responseText.split(\"\\n\");\
-//                 } catch (e) { }\
-//                 try {\
-//                     ads.forEach(function(ad) {\
-//                         try {\
-//                             ad = JSON.parse(ad);\
-//                             if (ad.label == \"CometNewsFeed_viewer$stream$CometNewsFeed_viewer_news_feed\" || typeof(ad[\"data\"][\"viewer\"][\"news_feed\"][\"edges\"][0][\"category\"]) !== \"undefined\") {\
-//                                 if (ad.data.category == \"SPONSORED\" || ad[\"data\"][\"viewer\"][\"news_feed\"][\"edges\"][0][\"category\"] == \"SPONSORED\") {\
-//                                     if (ad.data.category == \"SPONSORED\") {\
-//                                         var post_id = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target_with_context']['ufi_renderer']['feedback']['subscription_target_id'];\
-//                                         var page_id = ad['data']['node']['comet_sections']['context_layout']['story']['comet_sections']['actor_photo']['story']['actors'][0]['id'];\
-//                                         var name = ad['data']['node']['comet_sections']['context_layout']['story']['comet_sections']['title']['story']['actors'][0]['name'];\
-//                                         var url = ad['data']['node']['comet_sections']['context_layout']['story']['comet_sections']['title']['story']['actors'][0]['url'];\
-//                                         var text = ad['data']['node']['comet_sections']['content']['story']['comet_sections']['message']['story']['message']['text'];\
-//                                         var imageUrl = ad['data']['node']['comet_sections']['content']['story']['attachments'][0]['styles']['attachment']['media']['flexible_height_share_image']['uri'];\
-//                                         var footerDescriptionText = ad['data']['node']['comet_sections']['content']['story']['attachments'][0]['comet_footer_renderer']['attachment']['description']['text'];\
-//                                         var footerDomainName = ad['data']['node']['comet_sections']['content']['story']['attachments'][0]['comet_footer_renderer']['attachment']['source']['text'];\
-//                                         var likeCount = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target_with_context']['ufi_renderer']['feedback']['comet_ufi_summary_and_actions_renderer']['feedback']['reaction_count']['count'];\
-//                                         var commentCount = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target']['display_comments_count']['count'];\
-//                                         var shareCount = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target_with_context']['ufi_renderer']['feedback']['comet_ufi_summary_and_actions_renderer']['feedback']['share_count']['count'];\
-//                                         createAButton(\
-//                                             post_id.toString(),\
-//                                             page_id.toString(),\
-//                                             false, \
-//                                             name.toString(),\
-//                                             url.toString()\
-//                                         );\
-//                                         var thing = {\
-//                                             post_id: post_id,\
-//                                             page_id: page_id,\
-//                                             name: name,\
-//                                             url: url,\
-//                                             text: text,\
-//                                             imageUrl: imageUrl,\
-//                                             footerDescriptionText: footerDescriptionText,\
-//                                             footerDomainName: footerDomainName,\
-//                                             likeCount: likeCount,\
-//                                             commentCount: commentCount,\
-//                                             shareCount: shareCount,\
-//                                             post_raw_data: JSON.stringify(ad),\
-//                                             ad: ad\
-//                                         };\
-//                                         window.dispatchEvent(new CustomEvent(\"getChromeData\", {\
-//                                             detail: JSON.stringify(thing)\
-//                                         }));\
-//                                     } else {\
-//                                         var post_id = ad['data'][\"viewer\"][\"news_feed\"][\"edges\"][0]['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target_with_context']['ufi_renderer']['feedback']['subscription_target_id'];\
-//                                         var page_id = ad['data'][\"viewer\"][\"news_feed\"][\"edges\"][0]['node']['comet_sections']['context_layout']['story']['comet_sections']['actor_photo']['story']['actors'][0]['id'];\
-//                                         var name = ad['data'][\"viewer\"][\"news_feed\"][\"edges\"][0]['node']['comet_sections']['context_layout']['story']['comet_sections']['title']['story']['actors'][0]['name'];\
-//                                         var url = ad['data'][\"viewer\"][\"news_feed\"][\"edges\"][0]['node']['comet_sections']['context_layout']['story']['comet_sections']['title']['story']['actors'][0]['url'];\
-//                                         var text = ad['data']['node']['comet_sections']['content']['story']['comet_sections']['message']['story']['message']['text'];\
-//                                         var imageUrl = ad['data']['node']['comet_sections']['content']['story']['attachments'][0]['styles']['attachment']['media']['flexible_height_share_image']['uri'];\
-//                                         var footerDescriptionText = ad['data']['node']['comet_sections']['content']['story']['attachments'][0]['comet_footer_renderer']['attachment']['description']['text'];\
-//                                         var footerDomainName = ad['data']['node']['comet_sections']['content']['story']['attachments'][0]['comet_footer_renderer']['attachment']['source']['text'];\
-//                                         var likeCount = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target_with_context']['ufi_renderer']['feedback']['comet_ufi_summary_and_actions_renderer']['feedback']['reaction_count']['count'];\
-//                                         var commentCount = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target']['display_comments_count']['count'];\
-//                                         var shareCount = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target_with_context']['ufi_renderer']['feedback']['comet_ufi_summary_and_actions_renderer']['feedback']['share_count']['count'];\
-//                                         createAButton(\
-//                                             post_id.toString(),\
-//                                             page_id.toString(),\
-//                                             false, \
-//                                             name.toString(),\
-//                                             url.toString()\
-//                                         );\
-//                                         var thing = {\
-//                                             post_id: post_id,\
-//                                             page_id: page_id,\
-//                                             name: name,\
-//                                             url: url,\
-//                                             text: text,\
-//                                             imageUrl: imageUrl,\
-//                                             footerDescriptionText: footerDescriptionText,\
-//                                             footerDomainName: footerDomainName,\
-//                                             likeCount: likeCount,\
-//                                             commentCount: commentCount,\
-//                                             shareCount: shareCount,\
-//                                             post_raw_data: JSON.stringify(ad),\
-//                                             ad: ad\
-//                                         };\
-//                                         window.dispatchEvent(new CustomEvent(\"getChromeData\", {\
-//                                             detail: JSON.stringify(thing)\
-//                                         }));\
-//                                     }\
+// (r.innerHTML =
+//     "\
+//     const origOpen = XMLHttpRequest.prototype.open;\
+//     XMLHttpRequest.prototype.open = function() {\
+//         this.addEventListener('load', function() {\
+//             try {\
+//                 var ads = this.responseText.split(\"\\n\");\
+//             } catch (e) { }\
+//             try {\
+//                 ads.forEach(function(ad) {\
+//                     try {\
+//                         ad = JSON.parse(ad);\
+//                         if (ad.label == \"CometNewsFeed_viewer$stream$CometNewsFeed_viewer_news_feed\" || typeof(ad[\"data\"][\"viewer\"][\"news_feed\"][\"edges\"][0][\"category\"]) !== \"undefined\") {\
+//                             if (ad.data.category == \"SPONSORED\" || ad[\"data\"][\"viewer\"][\"news_feed\"][\"edges\"][0][\"category\"] == \"SPONSORED\") {\
+//                                 if (ad.data.category == \"SPONSORED\") {\
+//                                     var post_id = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target_with_context']['ufi_renderer']['feedback']['subscription_target_id'];\
+//                                     var page_id = ad['data']['node']['comet_sections']['context_layout']['story']['comet_sections']['actor_photo']['story']['actors'][0]['id'];\
+//                                     var name = ad['data']['node']['comet_sections']['context_layout']['story']['comet_sections']['title']['story']['actors'][0]['name'];\
+//                                     var url = ad['data']['node']['comet_sections']['context_layout']['story']['comet_sections']['title']['story']['actors'][0]['url'];\
+//                                     var text = ad['data']['node']['comet_sections']['content']['story']['comet_sections']['message']['story']['message']['text'];\
+//                                     var imageUrl = ad['data']['node']['comet_sections']['content']['story']['attachments'][0]['styles']['attachment']['media']['flexible_height_share_image']['uri'];\
+//                                     var footerDescriptionText = ad['data']['node']['comet_sections']['content']['story']['attachments'][0]['comet_footer_renderer']['attachment']['description']['text'];\
+//                                     var footerDomainName = ad['data']['node']['comet_sections']['content']['story']['attachments'][0]['comet_footer_renderer']['attachment']['source']['text'];\
+//                                     var likeCount = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target_with_context']['ufi_renderer']['feedback']['comet_ufi_summary_and_actions_renderer']['feedback']['reaction_count']['count'];\
+//                                     var commentCount = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target']['display_comments_count']['count'];\
+//                                     var shareCount = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target_with_context']['ufi_renderer']['feedback']['comet_ufi_summary_and_actions_renderer']['feedback']['share_count']['count'];\
+//                                     createAButton(\
+//                                         post_id.toString(),\
+//                                         page_id.toString(),\
+//                                         false, \
+//                                         name.toString(),\
+//                                         url.toString()\
+//                                     );\
+//                                     var thing = {\
+//                                         post_id: post_id,\
+//                                         page_id: page_id,\
+//                                         name: name,\
+//                                         url: url,\
+//                                         text: text,\
+//                                         imageUrl: imageUrl,\
+//                                         footerDescriptionText: footerDescriptionText,\
+//                                         footerDomainName: footerDomainName,\
+//                                         likeCount: likeCount,\
+//                                         commentCount: commentCount,\
+//                                         shareCount: shareCount,\
+//                                         post_raw_data: JSON.stringify(ad),\
+//                                         ad: ad\
+//                                     };\
+//                                     window.dispatchEvent(new CustomEvent(\"getChromeData\", {\
+//                                         detail: JSON.stringify(thing)\
+//                                     }));\
+//                                 } else {\
+//                                     var post_id = ad['data'][\"viewer\"][\"news_feed\"][\"edges\"][0]['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target_with_context']['ufi_renderer']['feedback']['subscription_target_id'];\
+//                                     var page_id = ad['data'][\"viewer\"][\"news_feed\"][\"edges\"][0]['node']['comet_sections']['context_layout']['story']['comet_sections']['actor_photo']['story']['actors'][0]['id'];\
+//                                     var name = ad['data'][\"viewer\"][\"news_feed\"][\"edges\"][0]['node']['comet_sections']['context_layout']['story']['comet_sections']['title']['story']['actors'][0]['name'];\
+//                                     var url = ad['data'][\"viewer\"][\"news_feed\"][\"edges\"][0]['node']['comet_sections']['context_layout']['story']['comet_sections']['title']['story']['actors'][0]['url'];\
+//                                     var text = ad['data']['node']['comet_sections']['content']['story']['comet_sections']['message']['story']['message']['text'];\
+//                                     var imageUrl = ad['data']['node']['comet_sections']['content']['story']['attachments'][0]['styles']['attachment']['media']['flexible_height_share_image']['uri'];\
+//                                     var footerDescriptionText = ad['data']['node']['comet_sections']['content']['story']['attachments'][0]['comet_footer_renderer']['attachment']['description']['text'];\
+//                                     var footerDomainName = ad['data']['node']['comet_sections']['content']['story']['attachments'][0]['comet_footer_renderer']['attachment']['source']['text'];\
+//                                     var likeCount = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target_with_context']['ufi_renderer']['feedback']['comet_ufi_summary_and_actions_renderer']['feedback']['reaction_count']['count'];\
+//                                     var commentCount = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target']['display_comments_count']['count'];\
+//                                     var shareCount = ad['data']['node']['comet_sections']['feedback']['story']['feedback_context']['feedback_target_with_context']['ufi_renderer']['feedback']['comet_ufi_summary_and_actions_renderer']['feedback']['share_count']['count'];\
+//                                     createAButton(\
+//                                         post_id.toString(),\
+//                                         page_id.toString(),\
+//                                         false, \
+//                                         name.toString(),\
+//                                         url.toString()\
+//                                     );\
+//                                     var thing = {\
+//                                         post_id: post_id,\
+//                                         page_id: page_id,\
+//                                         name: name,\
+//                                         url: url,\
+//                                         text: text,\
+//                                         imageUrl: imageUrl,\
+//                                         footerDescriptionText: footerDescriptionText,\
+//                                         footerDomainName: footerDomainName,\
+//                                         likeCount: likeCount,\
+//                                         commentCount: commentCount,\
+//                                         shareCount: shareCount,\
+//                                         post_raw_data: JSON.stringify(ad),\
+//                                         ad: ad\
+//                                     };\
+//                                     window.dispatchEvent(new CustomEvent(\"getChromeData\", {\
+//                                         detail: JSON.stringify(thing)\
+//                                     }));\
 //                                 }\
 //                             }\
-//                         } catch (e) { }\
-//                     });\
-//                 } catch (e) { }\
-//             });\
-//             origOpen.apply(this, arguments);\
-//         };\
-//     "),
+//                         }\
+//                     } catch (e) { }\
+//                 });\
+//             } catch (e) { }\
+//         });\
+//         origOpen.apply(this, arguments);\
+//     };\
+// "),
 
-    
 //     document.body.appendChild(a),
 //     document.body.appendChild(r),
 //     chrome.runtime.onMessage.addListener(function (r, a, s) {

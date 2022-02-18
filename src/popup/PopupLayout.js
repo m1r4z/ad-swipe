@@ -1,10 +1,13 @@
 import React from 'react';
-import { AUTO_SCROLL_MESSAGE } from '../common/constant';
+import { AUTO_SCROLL_ON_MESSAGE, AUTO_SCROLL_OFF_MESSAGE, SHOW_AD_OFF_MESSAGE, SHOW_AD_ON_MESSAGE } from '../common/constant';
 
 const PopupLayout = () => {
     const handleAutoScrollSwitch = (e) => {
-        console.log(e);
-        chrome.runtime.sendMessage({query: AUTO_SCROLL_MESSAGE});
+        if(e.target.checked){
+            chrome.runtime.sendMessage({query: AUTO_SCROLL_ON_MESSAGE});
+        }else{
+            chrome.runtime.sendMessage({query: AUTO_SCROLL_OFF_MESSAGE});
+        }
     }
     return (
         <>

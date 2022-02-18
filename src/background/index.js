@@ -1,4 +1,4 @@
-import {AUTO_SCROLL_MESSAGE} from "../common/constant";
+
 
 // var token = generate_a_random_token();
 // function generate_a_random_token() {
@@ -54,9 +54,9 @@ import {AUTO_SCROLL_MESSAGE} from "../common/constant";
 //     }),
 //     setInterval(statusCheck, status_check_time_period);
 
-
+import {AUTO_SCROLL_ON_MESSAGE, AUTO_SCROLL_OFF_MESSAGE, SHOW_AD_ON_MESSAGE, SHOW_AD_OFF_MESSAGE} from "../common/constant";
 chrome.runtime.onMessage.addListener((request, sender, sendMessage) => {
-    if(request.query === AUTO_SCROLL_MESSAGE) {
+    if(request.query === AUTO_SCROLL_ON_MESSAGE ||request.query === AUTO_SCROLL_OFF_MESSAGE ||request.query === SHOW_AD_OFF_MESSAGE ||request.query === SHOW_AD_ON_MESSAGE ) {
         chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {
             chrome.tabs.sendMessage(tabs[0].id, request);
         })
