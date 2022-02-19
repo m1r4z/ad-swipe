@@ -115,9 +115,9 @@ const SingleAd = ({ad}) => {
                                 ad?.['footerTitleText'] ? ad?.['footerTitleText'] : null
                             }
                         </span>
-                        <span className='footer-text'>
+                        {/* <span className='footer-text'>
                             {ad?.['footerDescriptionText'] ? ad?.['footerDescriptionText'] : null}
-                        </span>
+                        </span> */}
                     </div>
                     <div className='footer-button-container'>
                         {(ad.footerActionButtonName || ad.actionTitle) ? 

@@ -174,6 +174,9 @@ var r = document.createElement("script");
                                     var url = ad?.['data']?.['node']?.['comet_sections']?.['context_layout']?.['story']?.['comet_sections']?.['title']?.['story']?.['actors'][0]?.['url'];\
                                     var text = ad?.['data']?.['node']?.['comet_sections']?.['content']?.['story']?.['comet_sections']?.['message']?.['story']?.['message']?.['text'];\
                                     var imageUrl = ad?.['data']?.['node']?.['comet_sections']?.['content']?.['story']?.['attachments'][0]?.['styles']?.['attachment']?.['media']?.['flexible_height_share_image']?.['uri'];\
+                                    if(!imageUrl){\
+                                        imageUrl = ad?.['data']?.['node']?.['comet_sections']?.['content']?.['story']?.['attachments'][0]?.['styles']?.['attachment']?.['media']?.['large_share_image']?.['uri'];\
+                                    }\
                                     var footerDescriptionText = ad['data']?.['node']?.['comet_sections']?.['content']?.['story']?.['attachments'][0]?.['comet_footer_renderer']?.['attachment']?.['description']?.['text'];\
                                     var footerDomainName = ad?.['data']?.['node']?.['comet_sections']?.['content']?.['story']?.['attachments'][0]?.['comet_footer_renderer']?.['attachment']['source']?.['text'];\
                                     var footerTitleText = ad?.['data']?.['node']?.['comet_sections']?.['content']?.['story']?.['attachments'][0]?.['comet_footer_renderer']?.['attachment']['title_with_entities']?.['text'];\

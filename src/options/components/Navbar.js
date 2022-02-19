@@ -24,7 +24,7 @@ const Navbar = ({totalAd, totalAdvertisers, favoriteAds, handleTotalAd, handleTo
         <div className='navbar-container'>
             <div className='navbar-container-inner'>
                 <div className='logo-container'>
-                    AD SWIPE
+                <img alt='ad-swipe logo' src="adswipe_png.png" style={{width: "200px"}}/>
                 </div>
                 <ul className='nav-list'>
                     <li className={totalAdClass} onClick={handleTotalAd}>Total ads ( {totalAd} ) </li>

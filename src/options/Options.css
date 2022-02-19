@@ -108,7 +108,6 @@ body{
   border: 1px solid rgb(242, 243, 248);
   border-radius: 5px;
   max-width: 380px;
-  padding: 15px 0px;
   margin: 10px 15px;
 }
 
@@ -221,16 +220,20 @@ body{
   color: rgb(29, 121, 251);
   cursor: pointer;
   text-decoration: none;
+  margin-left: 0;
 }
 .single-ad-container .post-container .read-more:hover{
   border-bottom: 1px solid rgb(29, 121, 251);
 }
 .single-ad-container .post-container p{
-  max-height: 35px;
   overflow: hidden;
+  font-size: 12px;
+  line-height: 16px;
+  height: 32px;
 }
 .single-ad-container .post-container.expanded p{
   max-height: none;
+  height: auto;
 }
 .single-ad-container .image-container{
   width: 100%;
@@ -289,6 +292,7 @@ body{
 	align-items: flex-start;
   padding:10px;
   color: rgb(63, 63, 63);
+  width: calc(100% - 20px);
 }
 
 .footer-domain-text-container{
