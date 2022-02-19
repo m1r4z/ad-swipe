@@ -4,6 +4,7 @@ import { STORAGE_KEY_FB_AD, STORAGE_KEY_TODAYS_TOTAL_ADS, STORAGE_KEY_TODAYS_TOT
 console.log("contentScript hello");
 
 var state = false;
+var showAdState = false;
 
 chrome.runtime.onMessage.addListener((request, sender, sendMessage) => {
     if (request.query === AUTO_SCROLL_ON_MESSAGE) {
@@ -22,11 +23,47 @@ chrome.runtime.onMessage.addListener((request, sender, sendMessage) => {
 
 function showAdFn(from){
     if (from === "SHOW_AD_ON_MESSAGE") {
-        // document.querySelectorAll('div [data-pagelet="FeedUnit_{n}"] a[aria-label="Sponsored"]')
+        showAdState = true;
+        var headofdoc = document.getElementsByTagName("head")[0];
+		var mainCss = `
+            div [data-pagelet*="FeedUnit"]{
+                visibility: hidden;
+            }
+        `;
+        var s = document.createElement("style");
+		s.setAttribute("type", "text/css");
+		s.setAttribute("adswipe", "true");
+		s.appendChild(document.createTextNode(mainCss));
+		headofdoc.appendChild(s);
     }
     if (from === "SHOW_AD_OFF_MESSAGE") {
-        window.location.reload()
+        showAdState = false;
+        document.querySelectorAll('style').forEach(function(file){
+            if(file.getAttribute('adswipe')){
+                file.remove();
+                window.location.reload()
+            }
+        });
+        setTimeout(function(){
+            window.location.reload();
+        },5000);
     }
+
+    (function showAdsOnly(){
+        setTimeout(function () {
+            document.querySelectorAll('div [data-pagelet*="FeedUnit"]').forEach(function(singlePost){
+                if(singlePost.querySelector('a[aria-label="Sponsored"]')){
+                    // this is ad post
+                    singlePost.style.visibility = 'visible';
+                }else{
+                    singlePost.style.display = 'none';
+                }
+            });
+            if (showAdState) {
+                showAdsOnly();
+            }
+        }, 10);
+    })()
 }
 
 function autoScrollFn(from) {
