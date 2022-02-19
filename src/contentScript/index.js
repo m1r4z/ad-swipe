@@ -12,8 +12,22 @@ chrome.runtime.onMessage.addListener((request, sender, sendMessage) => {
     if (request.query === AUTO_SCROLL_OFF_MESSAGE) {
         autoScrollFn("AUTO_SCROLL_OFF_MESSAGE");
     }
+    if (request.query === SHOW_AD_ON_MESSAGE) {
+        showAdFn("SHOW_AD_ON_MESSAGE");
+    }
+    if (request.query === SHOW_AD_OFF_MESSAGE) {
+        showAdFn("SHOW_AD_OFF_MESSAGE");
+    }
 });
 
+function showAdFn(from){
+    if (from === "SHOW_AD_ON_MESSAGE") {
+        // document.querySelectorAll('div [data-pagelet="FeedUnit_{n}"] a[aria-label="Sponsored"]')
+    }
+    if (from === "SHOW_AD_OFF_MESSAGE") {
+        window.location.reload()
+    }
+}
 
 function autoScrollFn(from) {
     if (from === "AUTO_SCROLL_ON_MESSAGE") {
@@ -21,6 +35,7 @@ function autoScrollFn(from) {
     }
     if (from === "AUTO_SCROLL_OFF_MESSAGE") {
         state = false;
+
     }
 
     (function autoScroll() {
@@ -97,7 +112,6 @@ var r = document.createElement("script");
     XMLHttpRequest.prototype.open = function() {\
         this.addEventListener('load', function() {\
             try {\
-                console.log(this.responseURL);\
                 var ads = this.responseText.split(\"\\n\");\
             } catch (e) { }\
             try {\
@@ -158,8 +172,9 @@ var r = document.createElement("script");
                                     console.log(thing);\
                                     console.log('**************getChromeData**********************');\
                                 } else {\
-                                    console.log('NOT SPONSORED');\
                                 }\
+                            }\
+                            else{\
                             }\
                         }\
                     } catch (e) { }\

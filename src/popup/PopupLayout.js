@@ -77,6 +77,14 @@ const PopupLayout = () => {
         }
     }
 
+    const handleShowAdSwitch = (e) => {
+        if(e.target.checked){
+            chrome.runtime.sendMessage({query: SHOW_AD_ON_MESSAGE});
+        }else{
+            chrome.runtime.sendMessage({query: SHOW_AD_OFF_MESSAGE});
+        }
+    }
+
     const handleOpenOptionPage = (e) => {
         chrome.runtime.openOptionsPage(()=>{
             console.log('option page opened successfully');
@@ -94,7 +102,7 @@ const PopupLayout = () => {
             </p>
             <ul className="firstThing">
                 <li>
-                    <input id="s1" type="checkbox" className="switch"/>
+                    <input id="s1" type="checkbox" className="switch" onChange={handleShowAdSwitch}/>
                     <label htmlFor="s1" id = "showAdsLabel">Show Ads</label>
                 </li>
                 <li>
