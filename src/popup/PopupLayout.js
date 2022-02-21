@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
-import { AUTO_SCROLL_ON_MESSAGE, AUTO_SCROLL_OFF_MESSAGE, SHOW_AD_OFF_MESSAGE, SHOW_AD_ON_MESSAGE, OPTION_PAGE_OPEN, STORAGE_KEYFB_AD, STORAGE_KEY_TODAYS_TOTAL_ADS, STORAGE_KEY_TODAYS_TOTAL_AD_DOMAIN, STORAGE_KEY_TODAYS_TOTAL_FAVORITES, STORAGE_KEY_TOTAL_ADS, STORAGE_KEY_TOTAL_AD_DOMAIN, STORAGE_KEY_TOTAL_FAVORITES } from '../common/constant';
-import { addStorageChangeListener, removeStorageChangeListener, getDataFromStorage } from '../common/storageUtil';
+import { STORAGE_KEY_SETTINGS_AUTO_SCROLL, STORAGE_KEY_SETTINGS_SHOW_AD, AUTO_SCROLL_ON_MESSAGE, AUTO_SCROLL_OFF_MESSAGE, SHOW_AD_OFF_MESSAGE, SHOW_AD_ON_MESSAGE, OPTION_PAGE_OPEN, STORAGE_KEYFB_AD, STORAGE_KEY_TODAYS_TOTAL_ADS, STORAGE_KEY_TODAYS_TOTAL_AD_DOMAIN, STORAGE_KEY_TODAYS_TOTAL_FAVORITES, STORAGE_KEY_TOTAL_ADS, STORAGE_KEY_TOTAL_AD_DOMAIN, STORAGE_KEY_TOTAL_FAVORITES } from '../common/constant';
+import { addStorageChangeListener, removeStorageChangeListener, getDataFromStorage, setDataInStorage } from '../common/storageUtil';
 
 const PopupLayout = () => {
     const [totalAds, setTotalAds ] = useState(0);
@@ -13,22 +13,22 @@ const PopupLayout = () => {
     const [isDomainIsFacebook, setIsDomainIsFacebook] = useState(true);
 
     const storageChangeListener = (change, area) => {
-        if(area === "sync" && change[STORAGE_KEY_TODAYS_TOTAL_ADS]) {
+        if(area === "local" && change[STORAGE_KEY_TODAYS_TOTAL_ADS]) {
             setTodaysTotalAds(change[STORAGE_KEY_TODAYS_TOTAL_ADS]?.newValue?.results);
         }
-        if(area === "sync" && change[STORAGE_KEY_TODAYS_TOTAL_AD_DOMAIN]) {
+        if(area === "local" && change[STORAGE_KEY_TODAYS_TOTAL_AD_DOMAIN]) {
             setTodaysTotalAdsDomain(change[STORAGE_KEY_TODAYS_TOTAL_AD_DOMAIN]?.newValue?.results);
         }
-        if(area === "sync" && change[STORAGE_KEY_TODAYS_TOTAL_FAVORITES]) {
+        if(area === "local" && change[STORAGE_KEY_TODAYS_TOTAL_FAVORITES]) {
             setTodaysTotalFavorites(change[STORAGE_KEY_TODAYS_TOTAL_FAVORITES]?.newValue?.results);
         }
-        if(area === "sync" && change[STORAGE_KEY_TOTAL_ADS]) {
+        if(area === "local" && change[STORAGE_KEY_TOTAL_ADS]) {
             setTotalAds(change[STORAGE_KEY_TOTAL_ADS]?.newValue?.results);
         }
-        if(area === "sync" && change[STORAGE_KEY_TOTAL_AD_DOMAIN]) {
+        if(area === "local" && change[STORAGE_KEY_TOTAL_AD_DOMAIN]) {
             setTotalAdsDomain(change[STORAGE_KEY_TOTAL_AD_DOMAIN]?.newValue?.results);
         }
-        if(area === "sync" && change[STORAGE_KEY_TOTAL_FAVORITES]) {
+        if(area === "local" && change[STORAGE_KEY_TOTAL_FAVORITES]) {
             setTotalFavorites(change[STORAGE_KEY_TOTAL_FAVORITES]?.newValue?.results);
         }
     };
@@ -64,6 +64,21 @@ const PopupLayout = () => {
             }
         })
 
+        getDataFromStorage(STORAGE_KEY_SETTINGS_SHOW_AD).then((response)=>{
+            if(response){
+                document.querySelector('#s1').checked = true;
+            }else{
+                document.querySelector('#s1').checked = false;
+            }
+        })
+
+        getDataFromStorage(STORAGE_KEY_SETTINGS_AUTO_SCROLL).then((response)=>{
+            if(response){
+                document.querySelector('#s2').checked = true;
+            }else{
+                document.querySelector('#s2').checked = false;
+            }
+        })
 
         addStorageChangeListener(storageChangeListener);
         return () => removeStorageChangeListener(storageChangeListener);
@@ -71,16 +86,20 @@ const PopupLayout = () => {
 
     const handleAutoScrollSwitch = (e) => {
         if(e.target.checked){
+            setDataInStorage(STORAGE_KEY_SETTINGS_AUTO_SCROLL, true);
             chrome.runtime.sendMessage({query: AUTO_SCROLL_ON_MESSAGE});
         }else{
+            setDataInStorage(STORAGE_KEY_SETTINGS_AUTO_SCROLL, false);
             chrome.runtime.sendMessage({query: AUTO_SCROLL_OFF_MESSAGE});
         }
     }
 
     const handleShowAdSwitch = (e) => {
         if(e.target.checked){
+            setDataInStorage(STORAGE_KEY_SETTINGS_SHOW_AD, true);
             chrome.runtime.sendMessage({query: SHOW_AD_ON_MESSAGE});
         }else{
+            setDataInStorage(STORAGE_KEY_SETTINGS_SHOW_AD, false);
             chrome.runtime.sendMessage({query: SHOW_AD_OFF_MESSAGE});
         }
     }

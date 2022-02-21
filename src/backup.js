@@ -77,10 +77,10 @@ setTimeout(function () {
         }
         return (d = new Date()), (dash = "-"), (colon = ":"), d.getFullYear() + dash + e(d.getMonth() + 1) + dash + e(d.getDate()) + " " + e(d.getHours()) + colon + e(d.getMinutes()) + colon + e(d.getSeconds());
     }
-    chrome.storage.sync.get("s1", function (e) {
+    chrome.storage.local.get("s1", function (e) {
         1 == e.s1 && chrome.runtime.sendMessage({ message: "showAds" });
     });
-    chrome.storage.sync.get("s2", function (e) {
+    chrome.storage.local.get("s2", function (e) {
         1 == e.s2 && chrome.runtime.sendMessage({ message: "scroll" });
     });
     window.addEventListener(
@@ -95,7 +95,7 @@ setTimeout(function () {
                     .then((e) => {
                         try {
                             e &&
-                                (chrome.storage.sync.set({
+                                (chrome.storage.local.set({
                                     publications: e.publications,
                                     advertisers: e.advertisers,
                                     favorites: e.favorites,
@@ -129,7 +129,7 @@ setTimeout(function () {
                     .then((e) => {
                         try {
                             e &&
-                                (chrome.storage.sync.set({
+                                (chrome.storage.local.set({
                                     publications: e.publications,
                                     advertisers: e.advertisers,
                                     favorites: e.favorites,
@@ -155,7 +155,7 @@ setTimeout(function () {
                         .then((e) => {
                             try {
                                 e &&
-                                    (chrome.storage.sync.set({
+                                    (chrome.storage.local.set({
                                         publications: e.publications,
                                         advertisers: e.advertisers,
                                         favorites: e.favorites,

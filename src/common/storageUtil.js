@@ -4,7 +4,7 @@ import { PROJECT_NAME } from "./constant";
 export const getDataFromStorage = (key) => {
 	key = key ?? PROJECT_NAME;
 	return new Promise((resolve, reject) => {
-		chrome.storage.sync.get([key], (res) => {
+		chrome.storage.local.get([key], (res) => {
 			if (!res[key]) resolve(null);
 			else {
 				resolve(res[key]?.results);
@@ -16,7 +16,7 @@ export const getDataFromStorage = (key) => {
 export const setDataInStorage = ( key, value) => {
 	key = key ?? PROJECT_NAME;
 	return new Promise((resolve, reject) => {
-		chrome.storage.sync.set({ [key]: { id: uuidV4(), results: value } }, (res) => {
+		chrome.storage.local.set({ [key]: { id: uuidV4(), results: value } }, (res) => {
 			console.log("Value set " + key + " ", value);
 			resolve(null);
 		});

@@ -11,3 +11,5 @@ export const STORAGE_KEY_TOTAL_FAVORITES = 'totalFavorites';
 export const STORAGE_KEY_TODAYS_TOTAL_AD_DOMAIN = 'todaysTotalAdDomain';
 export const STORAGE_KEY_TODAYS_TOTAL_ADS = 'todaysTotalAds';
 export const STORAGE_KEY_TODAYS_TOTAL_FAVORITES = 'todaysTotalFavorites';
+export const STORAGE_KEY_SETTINGS_SHOW_AD = 'storageKeySettingsShowAd';
+export const STORAGE_KEY_SETTINGS_AUTO_SCROLL = 'storageKeySettingsAutoScroll';

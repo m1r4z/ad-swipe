@@ -6,11 +6,11 @@ import { addStorageChangeListener, removeStorageChangeListener, getDataFromStora
 import {STORAGE_KEY_FB_AD, AUTO_SCROLL_ON_MESSAGE, AUTO_SCROLL_OFF_MESSAGE, SHOW_AD_OFF_MESSAGE, SHOW_AD_ON_MESSAGE, OPTION_PAGE_OPEN, STORAGE_KEYFB_AD, STORAGE_KEY_TODAYS_TOTAL_ADS, STORAGE_KEY_TODAYS_TOTAL_AD_DOMAIN, STORAGE_KEY_TODAYS_TOTAL_FAVORITES, STORAGE_KEY_TOTAL_ADS, STORAGE_KEY_TOTAL_AD_DOMAIN, STORAGE_KEY_TOTAL_FAVORITES } from '../common/constant';
 import AdvertiserContainer from './components/AdvertiserContainer';
 import FavoriteAdsContainer from './components/FavoriteAdsContainer';
-
+import { getInfo } from 'fb-video-downloader';
 
 const Options = () =>{
   const [fbAds, setFbAds] = useState([{}]);
-
+    getInfo('https://www.facebook.com/100048228941124/videos/341613557702921/').then((info) => console.log(JSON.stringify(info, null, 2)));
   const [totalAds, setTotalAds ] = useState(0);
   const [totalAdsDomain, setTotalAdsDomain ] = useState(0);
   const [totalFavorites, setTotalFavorites ] = useState(0);
@@ -25,25 +25,25 @@ const Options = () =>{
   const [activeLiName, setActiveLiName] = useState('allAdsPage');
 
   const storageChangeListener = (change, area) => {
-    if(area === "sync" && change[STORAGE_KEY_TODAYS_TOTAL_ADS]) {
+    if(area === "local" && change[STORAGE_KEY_TODAYS_TOTAL_ADS]) {
         setTodaysTotalAds(change[STORAGE_KEY_TODAYS_TOTAL_ADS]?.newValue?.results);
     }
-    if(area === "sync" && change[STORAGE_KEY_TODAYS_TOTAL_AD_DOMAIN]) {
+    if(area === "local" && change[STORAGE_KEY_TODAYS_TOTAL_AD_DOMAIN]) {
         setTodaysTotalAdsDomain(change[STORAGE_KEY_TODAYS_TOTAL_AD_DOMAIN]?.newValue?.results);
     }
-    if(area === "sync" && change[STORAGE_KEY_TODAYS_TOTAL_FAVORITES]) {
+    if(area === "local" && change[STORAGE_KEY_TODAYS_TOTAL_FAVORITES]) {
         setTodaysTotalFavorites(change[STORAGE_KEY_TODAYS_TOTAL_FAVORITES]?.newValue?.results);
     }
-    if(area === "sync" && change[STORAGE_KEY_TOTAL_ADS]) {
+    if(area === "local" && change[STORAGE_KEY_TOTAL_ADS]) {
         setTotalAds(change[STORAGE_KEY_TOTAL_ADS]?.newValue?.results);
     }
-    if(area === "sync" && change[STORAGE_KEY_TOTAL_AD_DOMAIN]) {
+    if(area === "local" && change[STORAGE_KEY_TOTAL_AD_DOMAIN]) {
         setTotalAdsDomain(change[STORAGE_KEY_TOTAL_AD_DOMAIN]?.newValue?.results);
     }
-    if(area === "sync" && change[STORAGE_KEY_TOTAL_FAVORITES]) {
+    if(area === "local" && change[STORAGE_KEY_TOTAL_FAVORITES]) {
         setTotalFavorites(change[STORAGE_KEY_TOTAL_FAVORITES]?.newValue?.results);
     }
-    if(area === "sync" && change[STORAGE_KEY_FB_AD]) {
+    if(area === "local" && change[STORAGE_KEY_FB_AD]) {
       setFbAds(change[STORAGE_KEY_FB_AD]?.newValue?.results);
     }
 };
@@ -92,7 +92,7 @@ useEffect(() => {
 }, []);
 
   // const storageChangeListener = (change, area) => {
-  //   if(area === "sync" && change[STORAGE_KEY_FB_AD]) {
+  //   if(area === "local" && change[STORAGE_KEY_FB_AD]) {
   //     setFbAds(change[STORAGE_KEY_FB_AD]?.newValue?.results);
   //   }
   // };
