@@ -96,57 +96,59 @@ function autoScrollFn(from) {
 
 
 window.addEventListener(
-    "getChromeData",
+    "getChromeDataForAdSwipe",
     function (e) {
         console.log(e.detail);
         var t = JSON.parse(e.detail);
         getDataFromStorage(STORAGE_KEY_FB_AD).then((response)=>{
             if(response){
+                console.log(response);
                 response = [...response, t];
             }else{
                 response = [t];
             }
             setDataInStorage(STORAGE_KEY_FB_AD, response).then(()=>{
                 console.log('Data inserted successfully');
+
+                getDataFromStorage(STORAGE_KEY_TODAYS_TOTAL_ADS).then((response)=>{
+                    response = ++response;
+                    setDataInStorage(STORAGE_KEY_TODAYS_TOTAL_ADS, response).then(()=>{
+                        console.log('Todays Total Ads Incremented');
+                    })
+                });
+                getDataFromStorage(STORAGE_KEY_TODAYS_TOTAL_AD_DOMAIN).then((response)=>{
+                    response = ++response;
+                    setDataInStorage(STORAGE_KEY_TODAYS_TOTAL_AD_DOMAIN, response).then(()=>{
+                        console.log('Todays Total Ads domain Incremented');
+                    })
+                });
+                // getDataFromStorage(STORAGE_KEY_TODAYS_TOTAL_FAVORITES).then((response)=>{
+                //     response = ++response;
+                //     setDataInStorage(STORAGE_KEY_TODAYS_TOTAL_FAVORITES, response).then(()=>{
+                //         console.log('Todays Total Ads Favorites Incremented');
+                //     })
+                // });
+                getDataFromStorage(STORAGE_KEY_TOTAL_ADS).then((response)=>{
+                    response = ++response;
+                    setDataInStorage(STORAGE_KEY_TOTAL_ADS, response).then(()=>{
+                        console.log('Total Ads Incremented');
+                    })
+                });
+                getDataFromStorage(STORAGE_KEY_TOTAL_AD_DOMAIN).then((response)=>{
+                    response = ++response;
+                    setDataInStorage(STORAGE_KEY_TOTAL_AD_DOMAIN, response).then(()=>{
+                        console.log('Total Ads Domain Incremented');
+                    })
+                });
+                // getDataFromStorage(STORAGE_KEY_TOTAL_FAVORITES).then((response)=>{
+                //     response = ++response;
+                //     setDataInStorage(STORAGE_KEY_TOTAL_FAVORITES, response).then(()=>{
+                //         console.log('Total Ads Favorites Incremented');
+                //     })
+                // });
             });
         });
 
-        getDataFromStorage(STORAGE_KEY_TODAYS_TOTAL_ADS).then((response)=>{
-            response = ++response;
-            setDataInStorage(STORAGE_KEY_TODAYS_TOTAL_ADS, response).then(()=>{
-                console.log('Todays Total Ads Incremented');
-            })
-        });
-        getDataFromStorage(STORAGE_KEY_TODAYS_TOTAL_AD_DOMAIN).then((response)=>{
-            response = ++response;
-            setDataInStorage(STORAGE_KEY_TODAYS_TOTAL_AD_DOMAIN, response).then(()=>{
-                console.log('Todays Total Ads domain Incremented');
-            })
-        });
-        // getDataFromStorage(STORAGE_KEY_TODAYS_TOTAL_FAVORITES).then((response)=>{
-        //     response = ++response;
-        //     setDataInStorage(STORAGE_KEY_TODAYS_TOTAL_FAVORITES, response).then(()=>{
-        //         console.log('Todays Total Ads Favorites Incremented');
-        //     })
-        // });
-        getDataFromStorage(STORAGE_KEY_TOTAL_ADS).then((response)=>{
-            response = ++response;
-            setDataInStorage(STORAGE_KEY_TOTAL_ADS, response).then(()=>{
-                console.log('Total Ads Incremented');
-            })
-        });
-        getDataFromStorage(STORAGE_KEY_TOTAL_AD_DOMAIN).then((response)=>{
-            response = ++response;
-            setDataInStorage(STORAGE_KEY_TOTAL_AD_DOMAIN, response).then(()=>{
-                console.log('Total Ads Domain Incremented');
-            })
-        });
-        // getDataFromStorage(STORAGE_KEY_TOTAL_FAVORITES).then((response)=>{
-        //     response = ++response;
-        //     setDataInStorage(STORAGE_KEY_TOTAL_FAVORITES, response).then(()=>{
-        //         console.log('Total Ads Favorites Incremented');
-        //     })
-        // });
         },
     !1
 );
@@ -196,7 +198,7 @@ var r = document.createElement("script");
                                     var footerActionLinks = ad?.['data']?.['node']?.['comet_sections']?.['content']?.['story']?.['attachments'][0]?.['comet_footer_renderer']?.['attachment']?.['action_links'][0];\
                                     var attachments = ad?.['data']?.['node']?.['comet_sections']?.['content']?.['story']?.['attachments'][0]?.['styles']?.['attachment']?.['subattachments'];\
                                     var attachmentsArrayOfObject = [];\
-                                    console.log('hello world');\
+                                    var date = new Date();\
                                     if(attachments){\
                                         attachments.forEach(function(attachment){\
                                             var obj = {};\
@@ -233,16 +235,92 @@ var r = document.createElement("script");
                                         footerActionLinks: footerActionLinks,\
                                         isFavorite: false,\
                                         attachmentObject: attachmentsArrayOfObject,\
+                                        date: date,\
                                     };\
-                                    console.log('ad = ',ad);\
                                     if(name){\
-                                        window.dispatchEvent(new CustomEvent(\"getChromeData\", {\
+                                        window.dispatchEvent(new CustomEvent(\"getChromeDataForAdSwipe\", {\
                                             detail: JSON.stringify(thing)\
                                         }));\
                                     }\
                                     console.log(thing);\
-                                    console.log('**************getChromeData**********************');\
+                                    console.log('**************getChromeDataForAdSwipe**********************');\
                                 } else {\
+                                    console.log('NOT SPONSORED');\
+                                    console.log('ad = ',ad);\
+                                    var post_id = ad?.['data']?.['node']?.['comet_sections']?.['feedback']?.['story']?.['feedback_context']?.['feedback_target_with_context']?.['ufi_renderer']?.['feedback']?.['subscription_target_id'];\
+                                    var page_id = ad?.['data']?.['node']?.['comet_sections']?.['context_layout']?.['story']?.['comet_sections']?.['actor_photo']?.['story']?.['actors'][0]?.['id'];\
+                                    var name = ad?.['data']?.['node']?.['comet_sections']?.['context_layout']?.['story']?.['comet_sections']?.['title']?.['story']?.['actors'][0]?.['name'];\
+                                    var url = ad?.['data']?.['node']?.['comet_sections']?.['context_layout']?.['story']?.['comet_sections']?.['title']?.['story']?.['actors'][0]?.['url'];\
+                                    var text = ad?.['data']?.['node']?.['comet_sections']?.['content']?.['story']?.['comet_sections']?.['message']?.['story']?.['message']?.['text'];\
+                                    var imageUrl = ad?.['data']?.['node']?.['comet_sections']?.['content']?.['story']?.['attachments'][0]?.['styles']?.['attachment']?.['media']?.['flexible_height_share_image']?.['uri'];\
+                                    if(!imageUrl){\
+                                        imageUrl = ad?.['data']?.['node']?.['comet_sections']?.['content']?.['story']?.['attachments'][0]?.['styles']?.['attachment']?.['media']?.['large_share_image']?.['uri'];\
+                                    }\
+                                    var footerDescriptionText = ad['data']?.['node']?.['comet_sections']?.['content']?.['story']?.['attachments'][0]?.['comet_footer_renderer']?.['attachment']?.['description']?.['text'];\
+                                    var footerDomainName = ad?.['data']?.['node']?.['comet_sections']?.['content']?.['story']?.['attachments'][0]?.['comet_footer_renderer']?.['attachment']['source']?.['text'];\
+                                    var footerTitleText = ad?.['data']?.['node']?.['comet_sections']?.['content']?.['story']?.['attachments'][0]?.['comet_footer_renderer']?.['attachment']['title_with_entities']?.['text'];\
+                                    var footerActionLink = ad?.['data']?.['node']?.['comet_sections']?.['content']?.['story']?.['attachments'][0]?.['comet_footer_renderer']?.['attachment']['target']?.['external_url'];\
+                                    var footerActionButtonName = ad?.['data']?.['node']?.['comet_sections']?.['content']?.['story']?.['attachments'][0]?.['comet_footer_renderer']?.['attachment']['call_to_action_renderer']?.['action_link']?.['stateful_title'];\
+                                    var likeCount = ad?.['data']?.['node']?.['comet_sections']?.['feedback']?.['story']?.['feedback_context']?.['feedback_target_with_context']?.['ufi_renderer']?.['feedback']?.['comet_ufi_summary_and_actions_renderer']?.['feedback']?.['reaction_count']?.['count'];\
+                                    var commentCount = ad?.['data']?.['node']?.['comet_sections']?.['feedback']?.['story']?.['feedback_context']?.['feedback_target']?.['display_comments_count']?.['count'];\
+                                    var shareCount = ad?.['data']?.['node']?.['comet_sections']?.['feedback']?.['story']?.['feedback_context']?.['feedback_target_with_context']?.['ufi_renderer']?.['feedback']?.['comet_ufi_summary_and_actions_renderer']?.['feedback']?.['share_count']?.['count'];\
+                                    var mediaType = ad?.['data']?.['node']?.['comet_sections']?.['content']?.['story']?.['attachments'][0]?.['styles']?.['attachment']?.['media']?.['__typename'];\
+                                    var thumbnailImage = ad?.['data']?.['node']?.['comet_sections']?.['content']?.['story']?.['attachments'][0]?.['styles']?.['attachment']?.['media']?.['thumbnailImage']?.['uri'];\
+                                    var videoUrl = ad?.['data']?.['node']?.['comet_sections']?.['content']?.['story']?.['attachments'][0]?.['styles']?.['attachment']?.['url'];\
+                                    var actionTitle = ad?.['data']?.['node']?.['comet_sections']?.['content']?.['story']?.['attachments'][0]?.['comet_footer_renderer']?.['attachment']?.['call_to_action_renderer']?.['action_link']?.['title'];\
+                                    var pageId = ad?.['data']?.['node']?.['comet_sections']?.['content']?.['story']?.['attachments'][0]?.['comet_footer_renderer']?.['attachment']?.['call_to_action_renderer']?.['action_link']?.['page']?.['id'];\
+                                    var postUrl = ad?.['data']?.['node']?.['comet_sections']?.['context_layout']?.['feedback']?.['story']?.['url'];\
+                                    var logoUrl = ad?.['data']?.['node']?.['comet_sections']?.['context_layout']?.['story']?.['comet_sections']?.['actor_photo']?.['story']?.['actors'][0]?.['profile_picture']?.['uri'];\
+                                    var carouselNode = ad?.['data']?.['node']?.['comet_sections']?.['content']?.['story']?.['attachments'][0]?.['styles']?.['attachment']?.['all_subattachments'];\
+                                    var footerActionLinks = ad?.['data']?.['node']?.['comet_sections']?.['content']?.['story']?.['attachments'][0]?.['comet_footer_renderer']?.['attachment']?.['action_links'][0];\
+                                    var attachments = ad?.['data']?.['node']?.['comet_sections']?.['content']?.['story']?.['attachments'][0]?.['styles']?.['attachment']?.['subattachments'];\
+                                    var attachmentsArrayOfObject = [];\
+                                    var date = new Date();\
+                                    if(attachments){\
+                                        attachments.forEach(function(attachment){\
+                                            var obj = {};\
+                                            obj['title'] = attachment?.['card_title']?.['text'];\
+                                            obj['description'] = attachment?.['card_description']?.['text'];\
+                                            obj['webLink'] = attachment?.['multi_share_media_card_renderer']?.['attachment']?.['url'];\
+                                            obj['imageUrl'] = attachment?.['multi_share_media_card_renderer']?.['attachment']?.['media']?.['image']?.['uri'];\
+                                            attachmentsArrayOfObject.unshift(obj);\
+                                        });\
+                                    }\
+                                    var thing = {\
+                                        post_id: post_id,\
+                                        page_id: page_id,\
+                                        name: name,\
+                                        url: url,\
+                                        text: text,\
+                                        imageUrl: imageUrl,\
+                                        footerDescriptionText: footerDescriptionText,\
+                                        footerDomainName: footerDomainName,\
+                                        footerTitleText: footerTitleText,\
+                                        footerActionLink: footerActionLink,\
+                                        footerActionButtonName: footerActionButtonName,\
+                                        likeCount: likeCount,\
+                                        commentCount: commentCount,\
+                                        shareCount: shareCount,\
+                                        logoUrl: logoUrl,\
+                                        mediaType: mediaType,\
+                                        thumbnailImage: thumbnailImage,\
+                                        videoUrl: videoUrl,\
+                                        actionTitle: actionTitle,\
+                                        pageId: pageId,\
+                                        postUrl: postUrl,\
+                                        carouselNode: carouselNode,\
+                                        footerActionLinks: footerActionLinks,\
+                                        isFavorite: false,\
+                                        attachmentObject: attachmentsArrayOfObject,\
+                                        date: date,\
+                                    };\
+                                    if(name){\
+                                        window.dispatchEvent(new CustomEvent(\"getChromeDataForAdSwipe\", {\
+                                            detail: JSON.stringify(thing)\
+                                        }));\
+                                    }\
+                                    console.log(thing);\
+                                    console.log('**************getChromeDataForAdSwipe**********************');\
                                 }\
                             }\
                             else{\

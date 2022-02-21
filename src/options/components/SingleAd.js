@@ -61,6 +61,8 @@ const SingleAd = ({ad}) => {
             })
         })
     }
+    var href = `https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=BD&view_all_page_id=${ad.page_id}&search_type=page&media_type=all`;
+    var postPage = `https://www.facebook.com/ArlaFoodsBangladesh/posts/${ad.page_id}`;
     return (
         <div className='single-ad-container'>
             <div className='ad-heading-container'>
@@ -74,8 +76,8 @@ const SingleAd = ({ad}) => {
                     </div>
                 </div>
                 <div className='links-container'>
-                    <a href="#" className='ad-library'>Ad Library</a>
-                    <span className='facebook-icon'><FacebookIcon /></span>
+                    <a href={href} target='_blank' className='ad-library'>Ad Library</a>
+                    <a href={postPage} target='_blank'><span className='facebook-icon'><FacebookIcon /></span></a>
                     <span className='star-icon' onClick={handleFavorite}>{isFavoriteTrue ?<StarIcon2 /> : <StarIcon />}</span>
                     <span className='trash-icon'><TrashIcon /></span>
                 </div>
@@ -87,12 +89,11 @@ const SingleAd = ({ad}) => {
                 </div>
                 <div className='image-container'>
                     {ad.videoUrl && !ad.imageUrl? 
-                        <video width="100%" height="240" controls>
-                            <source src="https://www.youtube.com/watch?v=CRbZVD9OgLg"></source>
-                            <source src="https://www.youtube.com/watch?v=CRbZVD9OgLg"></source>
-                        </video> 
-                        // <ReactPlayer url={ad.videoUrl} />
-                        // <ReactPlayer url='https://www.youtube.com/watch?v=ysz5S6PUM-U' />
+                        // <video width="100%" height="240" controls>
+                        //     <source src="https://www.youtube.com/watch?v=CRbZVD9OgLg"></source>
+                        //     <source src="https://www.youtube.com/watch?v=CRbZVD9OgLg"></source>
+                        // </video> 
+                        <video type="video/mp4" crossorigin="anonymous" playsinline=""  preload="auto" src={ad.videoUrl} controlslist="nodownload"></video>
                     : ad.imageUrl ? 
                     <img src={ad.imageUrl} alt='alt'/> :
                         ad.thumbnailImage ? 
