@@ -75,18 +75,20 @@ function showAdFn(from){
 
                 //previously below code was working
 
-                // if(singlePost.querySelector('a[aria-label="Sponsored"]')){
-                //     // this is ad post
-                //     singlePost.style.visibility = 'visible';
-                //     singlePost.classList.add('visible');
-                //     singlePost.classList.add('ad');
-                //     singlePost.style.display = 'block';
-                //     // console.log('visible');
-                // }else{
-                //     singlePost.style.display = 'none';
-                //     singlePost.classList.add('not-ad');
-                //     // console.log('hidden');
-                // }
+                if(singlePost.querySelector('a[aria-label="Sponsored"]')){
+                    // this is ad post
+                    singlePost.style.visibility = 'visible';
+                    singlePost.classList.add('visible');
+                    singlePost.classList.add('ad');
+                    singlePost.classList.remove('not-ad');
+                    singlePost.style.display = 'block';
+                    // console.log('visible');
+                }else{
+                    singlePost.style.display = 'none';
+                    singlePost.classList.add('not-ad');
+                    singlePost.classList.remove('ad');
+                    // console.log('hidden');
+                }
             });
             if (showAdState) {
                 showAdsOnly();
