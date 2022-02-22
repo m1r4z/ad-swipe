@@ -45,33 +45,53 @@ function showAdFn(from){
         document.querySelectorAll('style').forEach(function(file){
             if(file.getAttribute('adswipe')){
                 file.remove();
-                window.location.reload()
+                //window.location.reload();
             }
         });
         setTimeout(function(){
-            window.location.reload();
+            //window.location.reload();
         },5000);
     }
 
     (function showAdsOnly(){
         setTimeout(function () {
-            document.querySelectorAll('div[data-pagelet*="FeedUnit"]:not(.ad):not(.not-ad)').forEach(function(singlePost){
-                if(singlePost.querySelector('a[aria-label="Sponsored"]')){
-                    // this is ad post
-                    singlePost.style.visibility = 'visible';
-                    singlePost.classList.add('visible');
-                    singlePost.classList.add('ad');
-                    console.log('visible');
-                }else{
-                    singlePost.style.display = 'none';
-                    singlePost.classList.add('not-ad');
-                    console.log('hidden');
-                }
+            document.querySelectorAll('div[data-pagelet*="FeedUnit"]').forEach(function(singlePost){
+                // singlePost.querySelectorAll('a').forEach(function(anchor){
+                //     if(anchor.getAttribute('href').match('ads')){
+                //         singlePost.style.visibility = 'visible';
+                //         singlePost.classList.add('visible');
+                //         singlePost.classList.add('ad');
+                //         singlePost.classList.remove('not-ad');
+                //         singlePost.style.display = 'block';
+                //         console.log('visible', singlePost);
+                //     }else{
+                //         singlePost.classList.remove('visible');
+                //         singlePost.style.display = 'none';
+                //         singlePost.classList.add('not-ad');
+                //         singlePost.classList.remove('ad');
+                //         console.log('hidden');
+                //     }
+                // });
+
+                //previously below code was working
+
+                // if(singlePost.querySelector('a[aria-label="Sponsored"]')){
+                //     // this is ad post
+                //     singlePost.style.visibility = 'visible';
+                //     singlePost.classList.add('visible');
+                //     singlePost.classList.add('ad');
+                //     singlePost.style.display = 'block';
+                //     // console.log('visible');
+                // }else{
+                //     singlePost.style.display = 'none';
+                //     singlePost.classList.add('not-ad');
+                //     // console.log('hidden');
+                // }
             });
             if (showAdState) {
                 showAdsOnly();
             }
-        }, 1000);
+        }, 3000);
     })()
 }
 

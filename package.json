@@ -11,6 +11,7 @@
     "react-browser-extension-scripts": "4.0.10",
     "react-dom": "^17.0.2",
     "react-player": "^2.9.0",
+    "react-slick": "^0.28.1",
     "uuid": "^8.3.2",
     "web-vitals": "^1.1.2"
   },

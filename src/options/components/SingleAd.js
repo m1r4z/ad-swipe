@@ -91,12 +91,13 @@ const SingleAd = ({ad}) => {
                     {ad.playableUrlQualityHd && !ad.imageUrl? 
                         <video style={{width: "100%"}} type="video/mp4" crossorigin="anonymous" playsinline=""  preload="auto" src={ad.playableUrlQualityHd} controlslist="nodownload" controls></video>
                     : ad.imageUrl ? 
-                    <img src={ad.imageUrl} alt='alt'/> :
-                        ad.thumbnailImage ? 
-                            <img src={ad.thumbnailImage} alt='alt'/> :
-                            <img src="https://scontent.fdac149-1.fna.fbcdn.net/v/t45.1600-4/cp0/q90/spS444/p526x296/273855500_23849073265530584_1757365283259183284_n.png.jpg?_nc_cat=104&ccb=1-5&_nc_sid=68ce8d&_nc_eui2=AeGWqUg2i6-GnVnOrSY-ILtr5-Ct3DU6tp_n4K3cNTq2n2CMb2kf7OZB7-Noje3o_eZJGrPMtob_itEBsDeDna9F&_nc_ohc=4SnItHBCaYYAX8drSHw&_nc_ht=scontent.fdac149-1.fna&oh=00_AT-2uKhJuhrHxpb_5LJ_BDLCnz3prnz9p1NK2RpJL3RPNw&oe=62150841" alt='alt'/> 
+                    <img src={ad.imageUrl} alt='alt'/> : null}
+                    {ad.attachmentObject && !ad.playableUrlQualityHd && !ad.imageUrl ? 
+                        <SlickCarousel attachmentObject={ad.attachmentObject}/> : 
+                        null
                     }
-                    {ad.carouselNode ? null : null}
+                    { !ad.thumbnailImage && !ad.attachmentObject && !ad.playableUrlQualityHd && !ad.imageUrl ?   
+                            <img src="https://scontent.fdac149-1.fna.fbcdn.net/v/t45.1600-4/cp0/q90/spS444/p526x296/273855500_23849073265530584_1757365283259183284_n.png.jpg?_nc_cat=104&ccb=1-5&_nc_sid=68ce8d&_nc_eui2=AeGWqUg2i6-GnVnOrSY-ILtr5-Ct3DU6tp_n4K3cNTq2n2CMb2kf7OZB7-Noje3o_eZJGrPMtob_itEBsDeDna9F&_nc_ohc=4SnItHBCaYYAX8drSHw&_nc_ht=scontent.fdac149-1.fna&oh=00_AT-2uKhJuhrHxpb_5LJ_BDLCnz3prnz9p1NK2RpJL3RPNw&oe=62150841" alt='alt'/> : null}
                 </div>
                 <div className='footer-container'>
                     <div className='footer-domain-text-container'>
