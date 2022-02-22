@@ -1,31 +1,44 @@
-import { AUTO_SCROLL_ON_MESSAGE, AUTO_SCROLL_OFF_MESSAGE, SHOW_AD_OFF_MESSAGE, SHOW_AD_ON_MESSAGE } from "../common/constant";
+import {
+	AUTO_SCROLL_ON_MESSAGE,
+	AUTO_SCROLL_OFF_MESSAGE,
+	SHOW_AD_OFF_MESSAGE,
+	SHOW_AD_ON_MESSAGE,
+} from "../common/constant";
 import { getDataFromStorage, setDataInStorage } from "../common/storageUtil";
-import { STORAGE_KEY_FB_AD, STORAGE_KEY_TODAYS_TOTAL_ADS, STORAGE_KEY_TODAYS_TOTAL_FAVORITES, STORAGE_KEY_TODAYS_TOTAL_AD_DOMAIN, STORAGE_KEY_TOTAL_ADS, STORAGE_KEY_TOTAL_FAVORITES, STORAGE_KEY_TOTAL_AD_DOMAIN} from "../common/constant"
+import {
+	STORAGE_KEY_FB_AD,
+	STORAGE_KEY_TODAYS_TOTAL_ADS,
+	STORAGE_KEY_TODAYS_TOTAL_FAVORITES,
+	STORAGE_KEY_TODAYS_TOTAL_AD_DOMAIN,
+	STORAGE_KEY_TOTAL_ADS,
+	STORAGE_KEY_TOTAL_FAVORITES,
+	STORAGE_KEY_TOTAL_AD_DOMAIN,
+} from "../common/constant";
 console.log("contentScript hello");
 
 var state = false;
 var showAdState = false;
 
 chrome.runtime.onMessage.addListener((request, sender, sendMessage) => {
-    if (request.query === AUTO_SCROLL_ON_MESSAGE) {
-        autoScrollFn("AUTO_SCROLL_ON_MESSAGE");
-    }
-    if (request.query === AUTO_SCROLL_OFF_MESSAGE) {
-        autoScrollFn("AUTO_SCROLL_OFF_MESSAGE");
-    }
-    if (request.query === SHOW_AD_ON_MESSAGE) {
-        showAdFn("SHOW_AD_ON_MESSAGE");
-    }
-    if (request.query === SHOW_AD_OFF_MESSAGE) {
-        showAdFn("SHOW_AD_OFF_MESSAGE");
-    }
+	if (request.query === AUTO_SCROLL_ON_MESSAGE) {
+		autoScrollFn("AUTO_SCROLL_ON_MESSAGE");
+	}
+	if (request.query === AUTO_SCROLL_OFF_MESSAGE) {
+		autoScrollFn("AUTO_SCROLL_OFF_MESSAGE");
+	}
+	if (request.query === SHOW_AD_ON_MESSAGE) {
+		showAdFn("SHOW_AD_ON_MESSAGE");
+	}
+	if (request.query === SHOW_AD_OFF_MESSAGE) {
+		showAdFn("SHOW_AD_OFF_MESSAGE");
+	}
 });
 
-function showAdFn(from){
-    console.log(from);
-    if (from === "SHOW_AD_ON_MESSAGE") {
-        showAdState = true;
-        var headofdoc = document.getElementsByTagName("head")[0];
+function showAdFn(from) {
+	console.log(from);
+	if (from === "SHOW_AD_ON_MESSAGE") {
+		showAdState = true;
+		var headofdoc = document.getElementsByTagName("head")[0];
 		var mainCss = `
             div [data-pagelet*="FeedUnit"]{
                 visibility: hidden;
@@ -34,150 +47,158 @@ function showAdFn(from){
                 visibility: visible;
             }
         `;
-        var s = document.createElement("style");
+		var s = document.createElement("style");
 		s.setAttribute("type", "text/css");
 		s.setAttribute("adswipe", "true");
 		s.appendChild(document.createTextNode(mainCss));
 		headofdoc.appendChild(s);
-    }
-    if (from === "SHOW_AD_OFF_MESSAGE") {
-        showAdState = false;
-        document.querySelectorAll('style').forEach(function(file){
-            if(file.getAttribute('adswipe')){
-                file.remove();
-                window.location.reload();
-            }
-        });
-        setTimeout(function(){
-            window.location.reload();
-        },5000);
-    }
+	}
+	if (from === "SHOW_AD_OFF_MESSAGE") {
+		showAdState = false;
+		document.querySelectorAll("style").forEach(function (file) {
+			if (file.getAttribute("adswipe")) {
+				file.remove();
+				window.location.reload();
+			}
+		});
+		setTimeout(function () {
+			window.location.reload();
+		}, 5000);
+	}
 
-    (function showAdsOnly(){
-        setTimeout(function () {
-            document.querySelectorAll('div[data-pagelet*="FeedUnit"]').forEach(function(singlePost){
-                // singlePost.querySelectorAll('a').forEach(function(anchor){
-                //     if(anchor.getAttribute('href').match('ads')){
-                //         singlePost.style.visibility = 'visible';
-                //         singlePost.classList.add('visible');
-                //         singlePost.classList.add('ad');
-                //         singlePost.classList.remove('not-ad');
-                //         singlePost.style.display = 'block';
-                //         console.log('visible', singlePost);
-                //     }else{
-                //         singlePost.classList.remove('visible');
-                //         singlePost.style.display = 'none';
-                //         singlePost.classList.add('not-ad');
-                //         singlePost.classList.remove('ad');
-                //         console.log('hidden');
-                //     }
-                // });
+	(function showAdsOnly() {
+		setTimeout(function () {
+			console.log("timeout called");
+			document
+				.querySelectorAll('div[data-pagelet*="FeedUnit"]')
+				.forEach(function (singlePost) {
+					// singlePost.querySelectorAll('a').forEach(function(anchor){
+					//     if(anchor.getAttribute('href').match('ads')){
+					//         singlePost.style.visibility = 'visible';
+					//         singlePost.classList.add('visible');
+					//         singlePost.classList.add('ad');
+					//         singlePost.classList.remove('not-ad');
+					//         singlePost.style.display = 'block';
+					//         console.log('visible', singlePost);
+					//     }else{
+					//         singlePost.classList.remove('visible');
+					//         singlePost.style.display = 'none';
+					//         singlePost.classList.add('not-ad');
+					//         singlePost.classList.remove('ad');
+					//         console.log('hidden');
+					//     }
+					// });
 
-                //previously below code was working
-
-                if(singlePost.querySelector('a[aria-label="Sponsored"]')){
-                    // this is ad post
-                    singlePost.style.visibility = 'visible';
-                    singlePost.classList.add('visible');
-                    singlePost.classList.add('ad');
-                    singlePost.classList.remove('not-ad');
-                    singlePost.style.display = 'block';
-                    // console.log('visible');
-                }else{
-                    singlePost.style.display = 'none';
-                    singlePost.classList.add('not-ad');
-                    singlePost.classList.remove('ad');
-                    // console.log('hidden');
-                }
-            });
-            if (showAdState) {
-                showAdsOnly();
-            }
-        }, 3000);
-    })()
+					//previously below code was working
+					if (
+						(
+							singlePost.querySelector("a[aria-label='Sponsored']") ??
+							singlePost.querySelector("a[aria-label='label']")
+						)?.innerText
+							?.match(/[a-zA-Z]+/g)
+							?.join("")
+							?.includes("Sponsored")
+					) {
+						// this is ad post
+						singlePost.style.visibility = "visible";
+						singlePost.classList.add("visible");
+						singlePost.classList.add("ad");
+						singlePost.classList.remove("not-ad");
+						singlePost.style.display = "block";
+						console.log("visible");
+					} else {
+						singlePost.style.display = "none";
+						singlePost.classList.add("not-ad");
+						singlePost.classList.remove("ad");
+						console.log("hidden");
+					}
+				});
+			if (showAdState) {
+				showAdsOnly();
+			}
+		}, 3000);
+	})();
 }
 
 function autoScrollFn(from) {
-    if (from === "AUTO_SCROLL_ON_MESSAGE") {
-        state = true;
-    }
-    if (from === "AUTO_SCROLL_OFF_MESSAGE") {
-        state = false;
+	if (from === "AUTO_SCROLL_ON_MESSAGE") {
+		state = true;
+	}
+	if (from === "AUTO_SCROLL_OFF_MESSAGE") {
+		state = false;
+	}
 
-    }
-
-    (function autoScroll() {
-        setTimeout(function () {
-            var height = document.documentElement.scrollHeight;
-            window.scrollBy(0, 1000);
-            if (state) {
-                autoScroll();
-            }
-        }, 1000);
-    })();
+	(function autoScroll() {
+		setTimeout(function () {
+			var height = document.documentElement.scrollHeight;
+			window.scrollBy(0, 1000);
+			if (state) {
+				autoScroll();
+			}
+		}, 1000);
+	})();
 }
 
-
 window.addEventListener(
-    "getChromeDataForAdSwipe",
-    function (e) {
-        console.log(e.detail);
-        var t = JSON.parse(e.detail);
-        getDataFromStorage(STORAGE_KEY_FB_AD).then((response)=>{
-            if(response){
-                console.log(response);
-                response = [...response, t];
-            }else{
-                response = [t];
-            }
-            setDataInStorage(STORAGE_KEY_FB_AD, response).then(()=>{
-                console.log('Data inserted successfully');
+	"getChromeDataForAdSwipe",
+	function (e) {
+		console.log(e.detail);
+		var t = JSON.parse(e.detail);
+		getDataFromStorage(STORAGE_KEY_FB_AD).then((response) => {
+			if (response) {
+				console.log(response);
+				response = [...response, t];
+			} else {
+				response = [t];
+			}
+			setDataInStorage(STORAGE_KEY_FB_AD, response).then(() => {
+				console.log("Data inserted successfully");
 
-                getDataFromStorage(STORAGE_KEY_TODAYS_TOTAL_ADS).then((response)=>{
-                    response = ++response;
-                    setDataInStorage(STORAGE_KEY_TODAYS_TOTAL_ADS, response).then(()=>{
-                        console.log('Todays Total Ads Incremented');
-                    })
-                });
-                getDataFromStorage(STORAGE_KEY_TODAYS_TOTAL_AD_DOMAIN).then((response)=>{
-                    response = ++response;
-                    setDataInStorage(STORAGE_KEY_TODAYS_TOTAL_AD_DOMAIN, response).then(()=>{
-                        console.log('Todays Total Ads domain Incremented');
-                    })
-                });
-                // getDataFromStorage(STORAGE_KEY_TODAYS_TOTAL_FAVORITES).then((response)=>{
-                //     response = ++response;
-                //     setDataInStorage(STORAGE_KEY_TODAYS_TOTAL_FAVORITES, response).then(()=>{
-                //         console.log('Todays Total Ads Favorites Incremented');
-                //     })
-                // });
-                getDataFromStorage(STORAGE_KEY_TOTAL_ADS).then((response)=>{
-                    response = ++response;
-                    setDataInStorage(STORAGE_KEY_TOTAL_ADS, response).then(()=>{
-                        console.log('Total Ads Incremented');
-                    })
-                });
-                getDataFromStorage(STORAGE_KEY_TOTAL_AD_DOMAIN).then((response)=>{
-                    response = ++response;
-                    setDataInStorage(STORAGE_KEY_TOTAL_AD_DOMAIN, response).then(()=>{
-                        console.log('Total Ads Domain Incremented');
-                    })
-                });
-                // getDataFromStorage(STORAGE_KEY_TOTAL_FAVORITES).then((response)=>{
-                //     response = ++response;
-                //     setDataInStorage(STORAGE_KEY_TOTAL_FAVORITES, response).then(()=>{
-                //         console.log('Total Ads Favorites Incremented');
-                //     })
-                // });
-            });
-        });
-
-        },
-    !1
+				getDataFromStorage(STORAGE_KEY_TODAYS_TOTAL_ADS).then((response) => {
+					response = ++response;
+					setDataInStorage(STORAGE_KEY_TODAYS_TOTAL_ADS, response).then(() => {
+						console.log("Todays Total Ads Incremented");
+					});
+				});
+				getDataFromStorage(STORAGE_KEY_TODAYS_TOTAL_AD_DOMAIN).then((response) => {
+					response = ++response;
+					setDataInStorage(STORAGE_KEY_TODAYS_TOTAL_AD_DOMAIN, response).then(() => {
+						console.log("Todays Total Ads domain Incremented");
+					});
+				});
+				// getDataFromStorage(STORAGE_KEY_TODAYS_TOTAL_FAVORITES).then((response)=>{
+				//     response = ++response;
+				//     setDataInStorage(STORAGE_KEY_TODAYS_TOTAL_FAVORITES, response).then(()=>{
+				//         console.log('Todays Total Ads Favorites Incremented');
+				//     })
+				// });
+				getDataFromStorage(STORAGE_KEY_TOTAL_ADS).then((response) => {
+					response = ++response;
+					setDataInStorage(STORAGE_KEY_TOTAL_ADS, response).then(() => {
+						console.log("Total Ads Incremented");
+					});
+				});
+				getDataFromStorage(STORAGE_KEY_TOTAL_AD_DOMAIN).then((response) => {
+					response = ++response;
+					setDataInStorage(STORAGE_KEY_TOTAL_AD_DOMAIN, response).then(() => {
+						console.log("Total Ads Domain Incremented");
+					});
+				});
+				// getDataFromStorage(STORAGE_KEY_TOTAL_FAVORITES).then((response)=>{
+				//     response = ++response;
+				//     setDataInStorage(STORAGE_KEY_TOTAL_FAVORITES, response).then(()=>{
+				//         console.log('Total Ads Favorites Incremented');
+				//     })
+				// });
+			});
+		});
+	},
+	!1
 );
 
 var r = document.createElement("script");
-(r.innerHTML ="\
+r.innerHTML =
+	"\
     const origOpen2 = XMLHttpRequest.prototype.open;\
     XMLHttpRequest.prototype.open = function() {\
         this.addEventListener('load', function() {\
@@ -284,6 +305,6 @@ var r = document.createElement("script");
         });\
         origOpen2.apply(this, arguments);\
     };\
-")
+";
 
-document.body.appendChild(r)
+document.body.appendChild(r);
