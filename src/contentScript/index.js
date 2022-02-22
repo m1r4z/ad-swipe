@@ -45,11 +45,11 @@ function showAdFn(from){
         document.querySelectorAll('style').forEach(function(file){
             if(file.getAttribute('adswipe')){
                 file.remove();
-                //window.location.reload();
+                window.location.reload();
             }
         });
         setTimeout(function(){
-            //window.location.reload();
+            window.location.reload();
         },5000);
     }
 
