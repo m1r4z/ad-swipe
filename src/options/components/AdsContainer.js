@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import SearchBar from './SearchBar';
 import SingleAd from './SingleAd';
 
-const AdsContainer = ({fbAds}) => {
+const AdsContainer = ({fbAds, handleRemoveClick, handleNameClickInSinglePost, specific}) => {
 
     const [ads, setAds] = useState([]);
 
@@ -58,6 +58,7 @@ const AdsContainer = ({fbAds}) => {
         setAds([...sortedAds]);
     }
 
+    
     useEffect(()=>{
         setAds(fbAds);
     },[fbAds]);
@@ -67,7 +68,7 @@ const AdsContainer = ({fbAds}) => {
             <SearchBar handleSearch={handleSearch} handleSorting={handleSorting}/>
             <div className='ads-container'>
                 {ads.map(ad=>{
-                    return <SingleAd key={ad.post_id} ad={ad}/>
+                    return <SingleAd key={ad.post_id} specific={specific} ad={ad} handleRemoveClick={handleRemoveClick} handleNameClickInSinglePost={handleNameClickInSinglePost}/>
                 })}
             </div>
         </>

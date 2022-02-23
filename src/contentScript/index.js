@@ -13,6 +13,8 @@ import {
 	STORAGE_KEY_TOTAL_ADS,
 	STORAGE_KEY_TOTAL_FAVORITES,
 	STORAGE_KEY_TOTAL_AD_DOMAIN,
+	STORAGE_KEY_SETTINGS_AUTO_SCROLL,
+	STORAGE_KEY_SETTINGS_SHOW_AD
 } from "../common/constant";
 console.log("contentScript hello");
 
@@ -31,6 +33,17 @@ chrome.runtime.onMessage.addListener((request, sender, sendMessage) => {
 	}
 	if (request.query === SHOW_AD_OFF_MESSAGE) {
 		showAdFn("SHOW_AD_OFF_MESSAGE");
+	}
+});
+
+getDataFromStorage(STORAGE_KEY_SETTINGS_SHOW_AD).then((response)=>{
+	if(response){
+		showAdFn("SHOW_AD_ON_MESSAGE");
+	}
+});
+getDataFromStorage(STORAGE_KEY_SETTINGS_AUTO_SCROLL).then((response)=>{
+	if(response){
+		autoScrollFn("AUTO_SCROLL_ON_MESSAGE");
 	}
 });
 
@@ -66,6 +79,25 @@ function showAdFn(from) {
 		}, 5000);
 	}
 
+	function checkSponsored(target){
+		if(!target){
+			return false;
+		}
+		var text = "Sponsored";
+		var j = 0;
+		var flag = false;
+
+		for(var i = 0; i<target.length; i++){
+			if(target.charAt(i).toLowerCase() == text.charAt(j).toLowerCase()){
+				if(text.charAt(j)=='d'){
+					flag = true;
+				}
+				j++;
+			}
+		}
+		return flag;
+	}
+
 	(function showAdsOnly() {
 		setTimeout(function () {
 			console.log("timeout called");
@@ -90,15 +122,11 @@ function showAdFn(from) {
 					// });
 
 					//previously below code was working
-					if (
-						(
-							singlePost.querySelector("a[aria-label='Sponsored']") ??
-							singlePost.querySelector("a[aria-label='label']")
-						)?.innerText
-							?.match(/[a-zA-Z]+/g)
-							?.join("")
-							?.includes("Sponsored")
-					) {
+					let targetText = (singlePost.querySelector("a[aria-label='Sponsored']") ?? singlePost.querySelector("a[aria-label='label']"))?.innerText;
+					
+					console.log(targetText);
+
+					if (checkSponsored(targetText)) {
 						// this is ad post
 						singlePost.style.visibility = "visible";
 						singlePost.classList.add("visible");
@@ -129,9 +157,13 @@ function autoScrollFn(from) {
 	}
 
 	(function autoScroll() {
+		window.scrollBy({
+			top: 1000,
+			left: 0,
+			behavior: 'smooth'
+		});
 		setTimeout(function () {
-			var height = document.documentElement.scrollHeight;
-			window.scrollBy(0, 1000);
+			// var height = document.documentElement.scrollHeight;
 			if (state) {
 				autoScroll();
 			}

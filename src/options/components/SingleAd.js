@@ -19,7 +19,8 @@ import ReactPlayer from 'react-player'
 
 import {STORAGE_KEY_FB_AD, STORAGE_KEY_TOTAL_FAVORITES} from '../../common/constant';
 import {setDataInStorage, getDataFromStorage} from '../../common/storageUtil';
-const SingleAd = ({ad}) => {
+import ModalForDelete from './ModalForDelete';
+const SingleAd = ({ad, handleRemoveClick, handleNameClickInSinglePost, specific}) => {
 
     const [isReadMoreClicked, setIsReadMoreClicked] = useState(false);
     const [isFavoriteTrue, setIsFavoriteTrue] = useState(ad.isFavorite);
@@ -61,17 +62,51 @@ const SingleAd = ({ad}) => {
             })
         })
     }
-    var href = `https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=BD&view_all_page_id=${ad.page_id}&search_type=page&media_type=all`;
-    var postPage = `${ad.url}/posts/${ad.page_id}`;
+
+    
+    var href = `https://www.facebook.com/ads/library/?active_status=all&ad_type=all&view_all_page_id=${ad.page_id}`;
+    var postPage = `${ad.url}posts/${ad.post_id}`;
+    var pageUrl = `https://www.facebook.com/${ad.page_id}`;
+
+    const [modalOpen, setModalOpen] = useState(false);
+
+    const closeModal = () =>{
+        setModalOpen(false);
+    }
+
+    const handleKeepClick = () => {
+        setModalOpen(false);
+    }
+
+    const openModal = () => {
+        setModalOpen(true);
+    }
+
+    const hanndleCrossClick = () => {
+        setModalOpen(false);
+    }
+
     return (
+    <>
+        {modalOpen ? <ModalForDelete 
+                        postId = {ad.post_id}
+                        closeModal={closeModal} 
+                        hanndleCrossClick={hanndleCrossClick} 
+                        handleRemoveClick={handleRemoveClick} 
+                        handleKeepClick={handleKeepClick} 
+                        specific={specific}
+                    /> : null}
+        
         <div className='single-ad-container'>
             <div className='ad-heading-container'>
                 <div className='logo-title-container'>
                     <div className='logo-container'>
-                        <img src={ad.logoUrl} alt="logo"/>
+                        <a href={pageUrl} target="_blank" alt={pageUrl}>
+                            <img src={ad.logoUrl} alt="logo"/>
+                        </a>
                     </div>
                     <div className='title-container'>
-                        <a href="#" className='title'>{ad.name}</a>
+                        <p className='title' onClick={()=>handleNameClickInSinglePost(ad.page_id)}>{ad.name}</p>
                         <p className='sponsored'><GlobeIcon /> <span>Sponsored</span></p>
                     </div>
                 </div>
@@ -79,7 +114,7 @@ const SingleAd = ({ad}) => {
                     <a href={href} target='_blank' className='ad-library'>Ad Library</a>
                     <a href={postPage} target='_blank'><span className='facebook-icon'><FacebookIcon /></span></a>
                     <span className='star-icon' onClick={handleFavorite}>{isFavoriteTrue ?<StarIcon2 /> : <StarIcon />}</span>
-                    <span className='trash-icon'><TrashIcon /></span>
+                    <span className='trash-icon' onClick={openModal}> <TrashIcon /></span>
                 </div>
             </div>
             <div className='post-image-container'>
@@ -143,6 +178,7 @@ const SingleAd = ({ad}) => {
                 </div>
             </div>
         </div>
+    </>
     );
 }
 

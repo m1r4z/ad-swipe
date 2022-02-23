@@ -2,11 +2,12 @@ import './Options.css';
 import Navbar from './components/Navbar';
 import React, { useState, useEffect } from 'react';
 import AdsContainer from './components/AdsContainer';
-import { addStorageChangeListener, removeStorageChangeListener, getDataFromStorage } from '../common/storageUtil';
+import { addStorageChangeListener, removeStorageChangeListener, getDataFromStorage, setDataInStorage } from '../common/storageUtil';
 import {STORAGE_KEY_FB_AD, AUTO_SCROLL_ON_MESSAGE, AUTO_SCROLL_OFF_MESSAGE, SHOW_AD_OFF_MESSAGE, SHOW_AD_ON_MESSAGE, OPTION_PAGE_OPEN, STORAGE_KEYFB_AD, STORAGE_KEY_TODAYS_TOTAL_ADS, STORAGE_KEY_TODAYS_TOTAL_AD_DOMAIN, STORAGE_KEY_TODAYS_TOTAL_FAVORITES, STORAGE_KEY_TOTAL_ADS, STORAGE_KEY_TOTAL_AD_DOMAIN, STORAGE_KEY_TOTAL_FAVORITES } from '../common/constant';
 import AdvertiserContainer from './components/AdvertiserContainer';
 import FavoriteAdsContainer from './components/FavoriteAdsContainer';
 import { getInfo } from 'fb-video-downloader';
+import AllAdsOfAdvertiser from './components/AllAdsOfAdvertiser';
 
 const Options = () =>{
   const [fbAds, setFbAds] = useState([{}]);
@@ -112,6 +113,7 @@ const handleTotalAd = () => {
     setAllAdvertisersPage(false);
     setFavoritePage(false);
     setActiveLiName('allAdsPage');
+    setAllAdsOfAdvertiser(false);
 }
 
 const handleTotalAdvertisers = () => {
@@ -119,19 +121,59 @@ const handleTotalAdvertisers = () => {
     setAllAdvertisersPage(true);
     setFavoritePage(false);
     setActiveLiName('allAdvertisersPage');
+    setAllAdsOfAdvertiser(false);
 }
 const handleFavoriteAds = () => {
     setAllAdsPage(false);
     setAllAdvertisersPage(false);
     setFavoritePage(true);
     setActiveLiName('favoritePage');
+    setAllAdsOfAdvertiser(false);
+}
+
+const handleRemoveClick = (postId, specific) => {
+    var filteredAds = fbAds;
+    var indexOfDeleteItem = -1;
+    for(var i = 0; i< fbAds.length; i++){
+        if(postId === fbAds[i]?.["post_id"]){
+            indexOfDeleteItem = i;
+        }
+    }
+    if (indexOfDeleteItem > -1) {
+        filteredAds.splice(indexOfDeleteItem, 1); 
+    }
+
+    setFbAds(filteredAds);
+    setDataInStorage(STORAGE_KEY_FB_AD, filteredAds).then(response=>console.log('data updated'));
+    if(specific){
+        setAllAdsOfAdvertiser(false);
+    }
+}
+
+const [showAllAdsOfAdvertiser , setAllAdsOfAdvertiser] = useState(false);
+const [specificPagePosts, setSpecificPagePosts] = useState([]);
+const handleAdvertiserClick = (pageId) => {
+    var specificPagePosts = fbAds.filter(ad => ad.page_id === pageId);
+    setSpecificPagePosts(specificPagePosts);
+    setAllAdsOfAdvertiser(true);
+}
+
+const handleBackClick = () => {
+    setAllAdsOfAdvertiser(false);
+}
+
+const handleNameClickInSinglePost = (pageId) =>{
+    handleAdvertiserClick(pageId);
 }
   return (
     <div className="App">
       <Navbar activeLiName={activeLiName} handleTotalAd={handleTotalAd} handleTotalAdvertisers={handleTotalAdvertisers} handleFavoriteAds={handleFavoriteAds}  totalAd={totalAds} totalAdvertisers={totalAdsDomain} favoriteAds={totalFavorites}/>
-      { allAdsPage ? <AdsContainer fbAds={fbAds}/> : null}
-      { allAdvertisersPage ? <AdvertiserContainer fbAds={fbAds}/> : null}
-      { favoritePage ? <FavoriteAdsContainer fbAds={fbAds} /> : null} 
+      {showAllAdsOfAdvertiser ? <AllAdsOfAdvertiser allAds={specificPagePosts} specific={true} handleRemoveClick={handleRemoveClick} handleBackClick={handleBackClick}/> : null}
+      
+    { allAdsPage && !showAllAdsOfAdvertiser ? <AdsContainer fbAds={fbAds} specific={false} handleRemoveClick={handleRemoveClick} handleNameClickInSinglePost={handleNameClickInSinglePost}/> : null}
+    { allAdvertisersPage && !showAllAdsOfAdvertiser ? <AdvertiserContainer fbAds={fbAds} handleAdvertiserClick={handleAdvertiserClick}/> : null}
+    { favoritePage && !showAllAdsOfAdvertiser ? <FavoriteAdsContainer fbAds={fbAds} specific={false} handleRemoveClick={handleRemoveClick}/> : null} 
+    
     </div>
   );
 }

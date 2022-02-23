@@ -241,6 +241,7 @@ code {
 	width: 100%;
 	margin-top: 20px;
 	margin-bottom: 20px;
+	cursor: pointer;
 }
 
 @supports (-webkit-appearance: none) or (-moz-appearance: none) {
