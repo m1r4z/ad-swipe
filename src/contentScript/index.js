@@ -21,6 +21,7 @@ console.log("contentScript hello");
 
 var state = false;
 var showAdState = false;
+var currentAdsArray = [];
 
 chrome.runtime.onMessage.addListener((request, sender, sendMessage) => {
 	if (request?.query === GET_CURRENT_URL) {
@@ -50,6 +51,28 @@ getDataFromStorage(STORAGE_KEY_SETTINGS_AUTO_SCROLL).then((response) => {
 	}
 });
 
+function checkSponsored(target) {
+	console.log('target ', target);
+	if (!target) {
+		return false;
+	}
+	var text = "Sponsored";
+	var j = 0;
+	var flag = false;
+
+	for (var i = 0; i < target.length; i++) {
+		if (target.charAt(i).toLowerCase() == text.charAt(j).toLowerCase()) {
+			if (text.charAt(j) == "d") {
+				flag = true;
+			}
+			j++;
+		}
+	}
+	console.log('flag ', flag);
+	return flag;
+}
+
+
 function showAdFn(from) {
 	console.log(from);
 	if (from === "SHOW_AD_ON_MESSAGE") {
@@ -74,32 +97,18 @@ function showAdFn(from) {
 		document.querySelectorAll("style").forEach(function (file) {
 			if (file.getAttribute("adswipe")) {
 				file.remove();
-				window.location.reload();
+				// window.location.reload();
 			}
 		});
 		setTimeout(function () {
-			window.location.reload();
+			// window.location.reload();
 		}, 5000);
 	}
 
-	function checkSponsored(target) {
-		if (!target) {
-			return false;
-		}
-		var text = "Sponsored";
-		var j = 0;
-		var flag = false;
 
-		for (var i = 0; i < target.length; i++) {
-			if (target.charAt(i).toLowerCase() == text.charAt(j).toLowerCase()) {
-				if (text.charAt(j) == "d") {
-					flag = true;
-				}
-				j++;
-			}
-		}
-		return flag;
-	}
+	var star = chrome.runtime.getURL('star.png');
+	var star2 = chrome.runtime.getURL('star2.png');
+	
 
 	(function showAdsOnly() {
 		setTimeout(function () {
@@ -107,47 +116,43 @@ function showAdFn(from) {
 			document
 				.querySelectorAll('div[data-pagelet*="FeedUnit"]')
 				.forEach(function (singlePost) {
-					// singlePost.querySelectorAll('a').forEach(function(anchor){
-					//     if(anchor.getAttribute('href').match('ads')){
-					//         singlePost.style.visibility = 'visible';
-					//         singlePost.classList.add('visible');
-					//         singlePost.classList.add('ad');
-					//         singlePost.classList.remove('not-ad');
-					//         singlePost.style.display = 'block';
-					//         console.log('visible', singlePost);
-					//     }else{
-					//         singlePost.classList.remove('visible');
-					//         singlePost.style.display = 'none';
-					//         singlePost.classList.add('not-ad');
-					//         singlePost.classList.remove('ad');
-					//         console.log('hidden');
-					//     }
-					// });
 
-					//previously below code was working
+					if(singlePost.querySelector('.ad-library-box')){
+						return;
+					}
+
 					let targetText = (
 						singlePost.querySelector("a[aria-label='Sponsored']") ??
 						singlePost.querySelector("a[aria-label='label']")
 					)?.innerText;
 
-					if (checkSponsored(targetText)) {
+					var filteredAd = currentAdsArray.filter(ad=> 
+						ad.name == singlePost.querySelector('h4.gmql0nx0.l94mrbxd.p1ri9a11.lzcic4wl.aahdfvyu.hzawbc8m').innerText ||
+						singlePost.innerHTML.includes(ad.url));
+
+					if (checkSponsored(targetText) && filteredAd.length > 0) {
 						// this is ad post
 						singlePost.style.visibility = "visible";
 						singlePost.classList.add("visible");
 						singlePost.classList.add("ad");
 						singlePost.classList.remove("not-ad");
 						singlePost.style.display = "block";
-						console.log("visible");
 
+						var href = `https://www.facebook.com/ads/library/?active_status=all&ad_type=all&view_all_page_id=${filteredAd.page_id}`;
 						var adLibraryLayoutDiv = document.createElement('div');
 						adLibraryLayoutDiv.innerHTML = `
-						<div style="display: flex; margin: -5px;">
-							<div class="ad_library_container">
-								<a class="ad_library_button" target="_blank" href="">
+						<div style="display: flex; margin: -5px;" class="ad-library-box">
+							<div class="ad_library_container" style="display: flex; justify-content: center; align-items: center;">
+								<a class="ad_library_button" target="_blank" href=${href} style="color: #6046ff; padding: 10px 15px; border: 1px soldi #6046ff;
+								border-radius: 5px; cursor: pointer;">
 									Ad Library
 								</a>
 							</div>
 							<div style="width: 0px; height: 24px; border: 1px solid rgb(242, 243, 248); margin-left: 5px; margin-top: 10px;">
+							</div>
+							<div style="width: 35px; height: 35px;">
+								<img style="width: 35px; height: 35px; object-fit: contain" alt="star icon" src=${star}/>
+								<img style="width: 35px; height: 35px; object-fit: contain; display: none;" alt="star icon" src=${star2}/>
 							</div>
 							<div style="width: 0px; height: 24px; border: 1px solid rgb(242, 243, 248); margin-left: 2px; margin-top: 10px;"></div>
 						</div>
@@ -161,7 +166,6 @@ function showAdFn(from) {
 						singlePost.style.display = "none";
 						singlePost.classList.add("not-ad");
 						singlePost.classList.remove("ad");
-						console.log("hidden");
 					}
 				});
 			if (showAdState) {
@@ -194,24 +198,6 @@ function autoScrollFn(from) {
 	})();
 }
 
-function checkSponsored(target) {
-	if (!target) {
-		return false;
-	}
-	var text = "Sponsored";
-	var j = 0;
-	var flag = false;
-
-	for (var i = 0; i < target.length; i++) {
-		if (target.charAt(i).toLowerCase() == text.charAt(j).toLowerCase()) {
-			if (text.charAt(j) == "d") {
-				flag = true;
-			}
-			j++;
-		}
-	}
-	return flag;
-}
 
 window.addEventListener(
 	"getChromeDataForAdSwipe",
@@ -219,49 +205,7 @@ window.addEventListener(
 		console.log(e.detail);
 		var t = JSON.parse(e.detail);
 
-		//
-		document
-			.querySelectorAll('div[data-pagelet*="FeedUnit"]')
-			.forEach(function (singlePost) {
-				let targetText = (
-					singlePost.querySelector("a[aria-label='Sponsored']") ??
-					singlePost.querySelector("a[aria-label='label']")
-				)?.innerText;
-
-				if (checkSponsored(targetText)) {
-					// this is ad post
-					singlePost.classList.add("visible");
-					singlePost.classList.add("ad");
-					singlePost.classList.remove("not-ad");
-					console.log("visible");
-
-					var href = `https://www.facebook.com/ads/library/?active_status=all&ad_type=all&view_all_page_id=${t.page_id}`;
-					var adLibraryLayoutDiv = document.createElement('div');
-					adLibraryLayoutDiv.innerHTML = `
-					<div style="display: flex; margin: -5px;">
-						<div class="ad_library_container">
-							<a class="ad_library_button" target="_blank" style="cursor: pointer;" href=${href}>
-								Ad Library
-							</a>
-						</div>
-						<div style="width: 0px; height: 24px; border: 1px solid rgb(242, 243, 248); margin-left: 5px; margin-top: 10px;">
-						</div>
-						<div style="width: 0px; height: 24px; border: 1px solid rgb(242, 243, 248); margin-left: 2px; margin-top: 10px;"></div>
-					</div>
-					`;
-					var parent = singlePost.querySelector('.ll8tlv6m.j83agx80.btwxx1t3.n851cfcs.hv4rvrfc.dati1w0a.pybr56ya')
-					var child = singlePost.querySelector('.nqmvxvec.j83agx80.jnigpg78.cxgpxx05.dflh9lhu.sj5x9vvc.scb9dxdr.odw8uiq3');
-					if(singlePost.querySelectorAll('.ad_library_container').length == 0){
-						parent.insertBefore(adLibraryLayoutDiv, child);
-					}
-				} else {
-					singlePost.classList.add("not-ad");
-					singlePost.classList.remove("ad");
-					console.log("hidden");
-				}
-			});
-
-		//
+		currentAdsArray.push(t);
 
 		getDataFromStorage(STORAGE_KEY_FB_AD).then((response) => {
 			if (response) {

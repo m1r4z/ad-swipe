@@ -22,6 +22,10 @@
 		"48": "img/icon-48.png",
 		"128": "img/icon-128.png"
 	},
+	"web_accessible_resources": [
+		"star.png",
+		"star2.png"
+	  ],
 	"options_page": "options.html",
 	"permissions": ["activeTab", "tabs", "storage", "unlimitedStorage"],
 	"content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
