@@ -13,7 +13,7 @@ const SlickCarousel = ({attachmentObject}) => {
 
       let arr = attachmentObject.map((attachment)=>{
         return (
-            <div className='slider-container'>
+            <div key={attachment.webLink ? attachment.webLink : "#"} className='slider-container'>
                 <div className='slider-image-container'>
                     <img alt="slider" src={attachment.imageUrl}/>
                 </div>

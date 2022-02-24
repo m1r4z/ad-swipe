@@ -5,7 +5,7 @@ const AdvertiserContainer = ({fbAds, handleAdvertiserClick}) => {
     return (
         <div className='advertiser-container'>
             {fbAds.map((ad=>{
-                return <SingleAdvertiser ad={ad} handleAdvertiserClick={handleAdvertiserClick}/>
+                return <SingleAdvertiser key={ad.post_id} ad={ad} handleAdvertiserClick={handleAdvertiserClick}/>
             }))}
         </div>
     );

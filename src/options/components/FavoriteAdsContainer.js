@@ -9,7 +9,7 @@ const FavoriteAdsContainer = ({fbAds}) => {
     return (
         <div className='ads-container'>
             {favoriteAds.map((ad=>{
-                return <SingleAd ad={ad}/>
+                return <SingleAd ad={ad} key={ad.post_id}/>
             }))}
         </div>
     );

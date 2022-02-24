@@ -145,11 +145,11 @@ const SingleAd = ({ ad, handleRemoveClick, handleNameClickInSinglePost, specific
 							<video
 								style={{ width: "100%" }}
 								type="video/mp4"
-								crossorigin="anonymous"
-								playsinline=""
+								crossOrigin="anonymous"
+								playsInline=""
 								preload="auto"
 								src={ad.playableUrlQualityHd}
-								controlslist="nodownload"
+								controlsList="nodownload"
 								controls
 							></video>
 						) : ad.imageUrl ? (
