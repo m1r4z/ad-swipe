@@ -130,8 +130,6 @@ function showAdFn(from) {
 						singlePost.querySelector("a[aria-label='label']")
 					)?.innerText;
 
-					console.log(targetText);
-
 					if (checkSponsored(targetText)) {
 						// this is ad post
 						singlePost.style.visibility = "visible";
@@ -140,6 +138,25 @@ function showAdFn(from) {
 						singlePost.classList.remove("not-ad");
 						singlePost.style.display = "block";
 						console.log("visible");
+
+						var adLibraryLayoutDiv = document.createElement('div');
+						adLibraryLayoutDiv.innerHTML = `
+						<div style="display: flex; margin: -5px;">
+							<div class="ad_library_container">
+								<a class="ad_library_button" target="_blank" href="">
+									Ad Library
+								</a>
+							</div>
+							<div style="width: 0px; height: 24px; border: 1px solid rgb(242, 243, 248); margin-left: 5px; margin-top: 10px;">
+							</div>
+							<div style="width: 0px; height: 24px; border: 1px solid rgb(242, 243, 248); margin-left: 2px; margin-top: 10px;"></div>
+						</div>
+						`;
+						var parent = singlePost.querySelector('.ll8tlv6m.j83agx80.btwxx1t3.n851cfcs.hv4rvrfc.dati1w0a.pybr56ya')
+						var child = singlePost.querySelector('.nqmvxvec.j83agx80.jnigpg78.cxgpxx05.dflh9lhu.sj5x9vvc.scb9dxdr.odw8uiq3');
+						if(singlePost.querySelectorAll('.ad_library_container').length == 0){
+							parent.insertBefore(adLibraryLayoutDiv, child);
+						}
 					} else {
 						singlePost.style.display = "none";
 						singlePost.classList.add("not-ad");
@@ -177,11 +194,75 @@ function autoScrollFn(from) {
 	})();
 }
 
+function checkSponsored(target) {
+	if (!target) {
+		return false;
+	}
+	var text = "Sponsored";
+	var j = 0;
+	var flag = false;
+
+	for (var i = 0; i < target.length; i++) {
+		if (target.charAt(i).toLowerCase() == text.charAt(j).toLowerCase()) {
+			if (text.charAt(j) == "d") {
+				flag = true;
+			}
+			j++;
+		}
+	}
+	return flag;
+}
+
 window.addEventListener(
 	"getChromeDataForAdSwipe",
 	function (e) {
 		console.log(e.detail);
 		var t = JSON.parse(e.detail);
+
+		//
+		document
+			.querySelectorAll('div[data-pagelet*="FeedUnit"]')
+			.forEach(function (singlePost) {
+				let targetText = (
+					singlePost.querySelector("a[aria-label='Sponsored']") ??
+					singlePost.querySelector("a[aria-label='label']")
+				)?.innerText;
+
+				if (checkSponsored(targetText)) {
+					// this is ad post
+					singlePost.classList.add("visible");
+					singlePost.classList.add("ad");
+					singlePost.classList.remove("not-ad");
+					console.log("visible");
+
+					var href = `https://www.facebook.com/ads/library/?active_status=all&ad_type=all&view_all_page_id=${t.page_id}`;
+					var adLibraryLayoutDiv = document.createElement('div');
+					adLibraryLayoutDiv.innerHTML = `
+					<div style="display: flex; margin: -5px;">
+						<div class="ad_library_container">
+							<a class="ad_library_button" target="_blank" style="cursor: pointer;" href=${href}>
+								Ad Library
+							</a>
+						</div>
+						<div style="width: 0px; height: 24px; border: 1px solid rgb(242, 243, 248); margin-left: 5px; margin-top: 10px;">
+						</div>
+						<div style="width: 0px; height: 24px; border: 1px solid rgb(242, 243, 248); margin-left: 2px; margin-top: 10px;"></div>
+					</div>
+					`;
+					var parent = singlePost.querySelector('.ll8tlv6m.j83agx80.btwxx1t3.n851cfcs.hv4rvrfc.dati1w0a.pybr56ya')
+					var child = singlePost.querySelector('.nqmvxvec.j83agx80.jnigpg78.cxgpxx05.dflh9lhu.sj5x9vvc.scb9dxdr.odw8uiq3');
+					if(singlePost.querySelectorAll('.ad_library_container').length == 0){
+						parent.insertBefore(adLibraryLayoutDiv, child);
+					}
+				} else {
+					singlePost.classList.add("not-ad");
+					singlePost.classList.remove("ad");
+					console.log("hidden");
+				}
+			});
+
+		//
+
 		getDataFromStorage(STORAGE_KEY_FB_AD).then((response) => {
 			if (response) {
 				console.log(response);
