@@ -433,7 +433,7 @@ body {
 	border: none;
 	outline: none;
 	border-left: 1px solid #6046ff;
-	padding: 5px 10px 5px 15px;
+	padding: 5px 15px 5px 15px;
 	font-size: 12px;
 	line-height: 16px;
 	color: rgb(29, 121, 251);
@@ -979,4 +979,24 @@ ul.slick-dots li button {
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+}
+.range-date-picker{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-bottom: 20px;
+}
+
+.calender-text{
+	white-space: nowrap;
+	padding: 10px 15px;
+	cursor: pointer;
+	border: 1px solid #6046ff;
+	margin: 0 10px;
+	border-radius: 5px;
+	color: #6046ff;
+}
+.calender-text:hover{
+	background: #6046ff;
+	color: #fff;
 }

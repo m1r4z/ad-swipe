@@ -1,10 +1,16 @@
 import React, {useEffect, useState} from 'react';
 import SearchBar from './SearchBar';
 import SingleAd from './SingleAd';
+import { addDays } from 'date-fns';
 
 const AdsContainer = ({fbAds, handleRemoveClick, handleNameClickInSinglePost, specific}) => {
 
     const [ads, setAds] = useState([]);
+    const [data, setData] = useState({
+        startDate: new Date(),
+        endDate: addDays(new Date(), 7),
+        key: 'selection'
+      });
 
     const handleSearch = (e) => {
         let isAdFound = false;
@@ -58,6 +64,24 @@ const AdsContainer = ({fbAds, handleRemoveClick, handleNameClickInSinglePost, sp
         setAds([...sortedAds]);
     }
 
+    const selectedDateRange = (item) => {
+        console.log('asdfasdf')
+        console.log(item.startDate)
+
+        var startDate = new Date(item.startDate);
+        var endDate = new Date(item.endDate);
+        
+        var filteredAds = fbAds.filter(ad=>{
+            var postDate = new Date(ad.date);
+            if(startDate < postDate && postDate < endDate){
+                return ad;
+            }
+        });
+
+        console.log(filteredAds);
+        setData(item);
+        setAds(filteredAds);
+    }
     
     useEffect(()=>{
         setAds(fbAds);
@@ -65,10 +89,12 @@ const AdsContainer = ({fbAds, handleRemoveClick, handleNameClickInSinglePost, sp
 
     return (
         <>
-            <SearchBar handleSearch={handleSearch} handleSorting={handleSorting}/>
+            <SearchBar handleSearch={handleSearch} handleSorting={handleSorting} selectedDateRange={selectedDateRange} data={data}/>
             <div className='ads-container'>
                 {ads.map(ad=>{
-                    return <SingleAd key={ad.post_id} specific={specific} ad={ad} handleRemoveClick={handleRemoveClick} handleNameClickInSinglePost={handleNameClickInSinglePost}/>
+                    if(ad){
+                        return <SingleAd key={ad?.['post_id']} specific={specific} ad={ad} handleRemoveClick={handleRemoveClick} handleNameClickInSinglePost={handleNameClickInSinglePost}/>
+                    }
                 })}
             </div>
         </>

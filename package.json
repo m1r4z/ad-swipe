@@ -9,6 +9,7 @@
     "fb-video-downloader": "^1.0.3",
     "react": "^17.0.2",
     "react-browser-extension-scripts": "4.0.10",
+    "react-date-range": "^1.4.0",
     "react-dom": "^17.0.2",
     "react-player": "^2.9.0",
     "react-slick": "^0.28.1",
