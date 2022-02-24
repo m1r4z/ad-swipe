@@ -52,7 +52,7 @@ getDataFromStorage(STORAGE_KEY_SETTINGS_AUTO_SCROLL).then((response) => {
 });
 
 function checkSponsored(target) {
-	console.log('target ', target);
+	console.log("target ", target);
 	if (!target) {
 		return false;
 	}
@@ -68,10 +68,9 @@ function checkSponsored(target) {
 			j++;
 		}
 	}
-	console.log('flag ', flag);
+	console.log("flag ", flag);
 	return flag;
 }
-
 
 function showAdFn(from) {
 	console.log(from);
@@ -97,18 +96,13 @@ function showAdFn(from) {
 		document.querySelectorAll("style").forEach(function (file) {
 			if (file.getAttribute("adswipe")) {
 				file.remove();
-				// window.location.reload();
+				window.location.reload();
 			}
 		});
 		setTimeout(function () {
-			// window.location.reload();
+			window.location.reload();
 		}, 5000);
 	}
-
-
-	var star = chrome.runtime.getURL('star.png');
-	var star2 = chrome.runtime.getURL('star2.png');
-	
 
 	(function showAdsOnly() {
 		setTimeout(function () {
@@ -116,8 +110,7 @@ function showAdFn(from) {
 			document
 				.querySelectorAll('div[data-pagelet*="FeedUnit"]')
 				.forEach(function (singlePost) {
-
-					if(singlePost.querySelector('.ad-library-box')){
+					if (singlePost.querySelector(".ad-library-box")) {
 						return;
 					}
 
@@ -126,9 +119,11 @@ function showAdFn(from) {
 						singlePost.querySelector("a[aria-label='label']")
 					)?.innerText;
 
-					var filteredAd = currentAdsArray.filter(ad=> 
-						ad.name == singlePost.querySelector('h4.gmql0nx0.l94mrbxd.p1ri9a11.lzcic4wl.aahdfvyu.hzawbc8m').innerText ||
-						singlePost.innerHTML.includes(ad.url));
+					var filteredAd = currentAdsArray.filter(
+						(ad) =>
+							singlePost.innerHTML.includes(ad.name) ||
+							singlePost.innerHTML.includes(ad.url)
+					);
 
 					if (checkSponsored(targetText) && filteredAd.length > 0) {
 						// this is ad post
@@ -138,12 +133,14 @@ function showAdFn(from) {
 						singlePost.classList.remove("not-ad");
 						singlePost.style.display = "block";
 
-						var href = `https://www.facebook.com/ads/library/?active_status=all&ad_type=all&view_all_page_id=${filteredAd.page_id}`;
-						var adLibraryLayoutDiv = document.createElement('div');
+						console.log("filteredAd: ", filteredAd);
+
+						var href = `https://www.facebook.com/ads/library/?active_status=all&ad_type=all&view_all_page_id=${filteredAd?.[0].page_id}`;
+						var adLibraryLayoutDiv = document.createElement("div");
 						adLibraryLayoutDiv.innerHTML = `
 						<div style="display: flex; margin: -5px;" class="ad-library-box">
 							<div class="ad_library_container" style="display: flex; justify-content: center; align-items: center;">
-								<a class="ad_library_button" target="_blank" href=${href} style="color: #6046ff; padding: 10px 15px; border: 1px soldi #6046ff;
+								<a class="ad_library_button" target="_blank" href=${href} style="color: #6046ff; padding: 10px 15px; border: 2px solid #6046ff;
 								border-radius: 5px; cursor: pointer;">
 									Ad Library
 								</a>
@@ -151,15 +148,19 @@ function showAdFn(from) {
 							<div style="width: 0px; height: 24px; border: 1px solid rgb(242, 243, 248); margin-left: 5px; margin-top: 10px;">
 							</div>
 							<div style="width: 35px; height: 35px;">
-								<img style="width: 35px; height: 35px; object-fit: contain" alt="star icon" src=${star}/>
-								<img style="width: 35px; height: 35px; object-fit: contain; display: none;" alt="star icon" src=${star2}/>
+								<span style="font-size: 20px; font-weight: 600; cursor: pointer: color: #6046ff;">☆</span>
+								<span style="font-size: 20px; font-weight: 600; cursor: pointer: color: #6046ff; display: none;">★</span>
 							</div>
 							<div style="width: 0px; height: 24px; border: 1px solid rgb(242, 243, 248); margin-left: 2px; margin-top: 10px;"></div>
 						</div>
 						`;
-						var parent = singlePost.querySelector('.ll8tlv6m.j83agx80.btwxx1t3.n851cfcs.hv4rvrfc.dati1w0a.pybr56ya')
-						var child = singlePost.querySelector('.nqmvxvec.j83agx80.jnigpg78.cxgpxx05.dflh9lhu.sj5x9vvc.scb9dxdr.odw8uiq3');
-						if(singlePost.querySelectorAll('.ad_library_container').length == 0){
+						var parent = singlePost.querySelector(
+							".ll8tlv6m.j83agx80.btwxx1t3.n851cfcs.hv4rvrfc.dati1w0a.pybr56ya"
+						);
+						var child = singlePost.querySelector(
+							".nqmvxvec.j83agx80.jnigpg78.cxgpxx05.dflh9lhu.sj5x9vvc.scb9dxdr.odw8uiq3"
+						);
+						if (singlePost.querySelectorAll(".ad_library_container").length == 0) {
 							parent.insertBefore(adLibraryLayoutDiv, child);
 						}
 					} else {
@@ -197,7 +198,6 @@ function autoScrollFn(from) {
 		}, 1000);
 	})();
 }
-
 
 window.addEventListener(
 	"getChromeDataForAdSwipe",

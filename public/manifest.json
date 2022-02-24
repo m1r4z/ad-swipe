@@ -1,6 +1,6 @@
 {
 	"manifest_version": 2,
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"short_name": "Ad Swipe",
 	"name": "Ad Swipe",
 	"description": "Your one stop for all your Ad research, competition analysis and facebook advertising needs",
@@ -22,10 +22,7 @@
 		"48": "img/icon-48.png",
 		"128": "img/icon-128.png"
 	},
-	"web_accessible_resources": [
-		"star.png",
-		"star2.png"
-	  ],
+	"web_accessible_resources": ["img/*.png"],
 	"options_page": "options.html",
 	"permissions": ["activeTab", "tabs", "storage", "unlimitedStorage"],
 	"content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
