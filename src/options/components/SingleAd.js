@@ -136,7 +136,13 @@ const SingleAd = ({ad, handleRemoveClick, handleNameClickInSinglePost, specific}
                 </div>
                 <div className='footer-container'>
                     <div className='footer-domain-text-container'>
-                        <span className='footer-domain'>
+                        <span className='footer-domain' onClick={()=>{
+                           if(ad?.['footerActionLinks']?.['link_display']){
+                               var url = "www.";
+                               url += ad?.['footerActionLinks']?.['link_display'];
+                               window.open(url, '_blank');
+                           } 
+                        }}>
                             {ad?.['footerActionLinks']?.['link_display'] ? 
                                 ad?.['footerActionLinks']?.['link_display'] :
                                 ad?.['footerDomainName'] ? ad?.['footerDomainName'] : null
@@ -153,7 +159,7 @@ const SingleAd = ({ad, handleRemoveClick, handleNameClickInSinglePost, specific}
                         </span> */}
                     </div>
                     <div className='footer-button-container'>
-                        {(ad.footerActionButtonName || ad.actionTitle) ? 
+                        {(ad?.['footerActionLinks']?.['url'] && (ad.footerActionButtonName || ad.actionTitle)) ? 
                             <a href={ad?.['footerActionLinks']?.['url']}>{ad.footerActionButtonName ? ad.footerActionButtonName : ad.actionTitle}</a> : 
                             null
                         }
