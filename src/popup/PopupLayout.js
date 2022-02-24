@@ -160,41 +160,46 @@ const PopupLayout = () => {
 				<p className="logo">
 					<img alt="ad-swipe logo" src="adswipe_png.png" />
 				</p>
-				{!isDomainIsFacebook ? (
-					<p className="gotoFacebookLabel">
-						Go to
-						<a target="_blank" rel="noreferrer" href="https://www.facebook.com/">
-							{" "}
-							Facebook.com{" "}
-						</a>
-						to start finding ads
-					</p>
-				) : (
-					<ul className="firstThing">
-						<li>
-							<input
-								id="s1"
-								type="checkbox"
-								className="switch"
-								onChange={handleShowAdSwitch}
-							/>
-							<label htmlFor="s1" id="showAdsLabel">
-								Show Ads
-							</label>
-						</li>
-						<li>
-							<input
-								id="s2"
-								type="checkbox"
-								className="switch"
-								onChange={handleAutoScrollSwitch}
-							/>
-							<label htmlFor="s2" id="autoScrollLabel">
-								Auto Scroll
-							</label>
-						</li>
-					</ul>
-				)}
+
+				<p
+					className="gotoFacebookLabel"
+					style={isDomainIsFacebook ? { display: "none" } : { display: "" }}
+				>
+					Go to
+					<a target="_blank" rel="noreferrer" href="https://www.facebook.com/">
+						{" "}
+						Facebook.com{" "}
+					</a>
+					to start finding ads
+				</p>
+
+				<ul
+					className="firstThing"
+					style={!isDomainIsFacebook ? { display: "none" } : { display: "" }}
+				>
+					<li>
+						<input
+							id="s1"
+							type="checkbox"
+							className="switch"
+							onChange={handleShowAdSwitch}
+						/>
+						<label htmlFor="s1" id="showAdsLabel">
+							Show Ads
+						</label>
+					</li>
+					<li>
+						<input
+							id="s2"
+							type="checkbox"
+							className="switch"
+							onChange={handleAutoScrollSwitch}
+						/>
+						<label htmlFor="s2" id="autoScrollLabel">
+							Auto Scroll
+						</label>
+					</li>
+				</ul>
 				<div id="metrics_container">
 					<div className="lifeTimeActivityContainer">
 						<h3>Lifetime Activity</h3>
