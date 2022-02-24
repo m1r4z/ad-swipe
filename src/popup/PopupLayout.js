@@ -15,6 +15,7 @@ import {
 	STORAGE_KEY_TOTAL_AD_DOMAIN,
 	STORAGE_KEY_TOTAL_FAVORITES,
 	STORAGE_KEY_LAST_CHECKED_TIME,
+	GET_CURRENT_URL,
 } from "../common/constant";
 import {
 	addStorageChangeListener,
@@ -30,7 +31,7 @@ const PopupLayout = () => {
 	const [todaysTotalAds, setTodaysTotalAds] = useState(0);
 	const [todaysTotalAdsDomain, setTodaysTotalAdsDomain] = useState(0);
 	const [todaysTotalFavorites, setTodaysTotalFavorites] = useState(0);
-	const [isDomainIsFacebook, setIsDomainIsFacebook] = useState(true);
+	const [isDomainIsFacebook, setIsDomainIsFacebook] = useState(false);
 
 	const storageChangeListener = (change, area) => {
 		if (area === "local" && change[STORAGE_KEY_TODAYS_TOTAL_ADS]) {
@@ -99,18 +100,29 @@ const PopupLayout = () => {
 
 		getDataFromStorage(STORAGE_KEY_SETTINGS_SHOW_AD).then((response) => {
 			if (response) {
-				document.querySelector("#s1").checked = true;
+				document.querySelector("#s1") && (document.querySelector("#s1").checked = true);
 			} else {
-				document.querySelector("#s1").checked = false;
+				document.querySelector("#s1") && (document.querySelector("#s1").checked = false);
 			}
 		});
 
 		getDataFromStorage(STORAGE_KEY_SETTINGS_AUTO_SCROLL).then((response) => {
 			if (response) {
-				document.querySelector("#s2").checked = true;
+				document.querySelector("#s2") && (document.querySelector("#s2").checked = true);
 			} else {
-				document.querySelector("#s2").checked = false;
+				document.querySelector("#s2") && (document.querySelector("#s2").checked = false);
 			}
+		});
+
+		chrome.tabs.query({ currentWindow: true, active: true }, (tabs) => {
+			chrome.tabs.sendMessage(tabs[0].id, { query: GET_CURRENT_URL }, (response) => {
+				console.log(response);
+				if (!response && chrome.runtime.lastError) return;
+				if (response?.query === GET_CURRENT_URL) {
+					if (response?.url?.includes("facebook.com")) setIsDomainIsFacebook(true);
+					else setIsDomainIsFacebook(false);
+				}
+			});
 		});
 
 		addStorageChangeListener(storageChangeListener);
@@ -148,38 +160,41 @@ const PopupLayout = () => {
 				<p className="logo">
 					<img alt="ad-swipe logo" src="adswipe_png.png" />
 				</p>
-				<p className="gotoFacebookLabel">
-					Go to
-					<a target="_blank" rel="noreferrer" href="https://www.facebook.com/">
-						{" "}
-						Facebook.com{" "}
-					</a>
-					to start finding ads
-				</p>
-				<ul className="firstThing">
-					<li>
-						<input
-							id="s1"
-							type="checkbox"
-							className="switch"
-							onChange={handleShowAdSwitch}
-						/>
-						<label htmlFor="s1" id="showAdsLabel">
-							Show Ads
-						</label>
-					</li>
-					<li>
-						<input
-							id="s2"
-							type="checkbox"
-							className="switch"
-							onChange={handleAutoScrollSwitch}
-						/>
-						<label htmlFor="s2" id="autoScrollLabel">
-							Auto Scroll
-						</label>
-					</li>
-				</ul>
+				{!isDomainIsFacebook ? (
+					<p className="gotoFacebookLabel">
+						Go to
+						<a target="_blank" rel="noreferrer" href="https://www.facebook.com/">
+							{" "}
+							Facebook.com{" "}
+						</a>
+						to start finding ads
+					</p>
+				) : (
+					<ul className="firstThing">
+						<li>
+							<input
+								id="s1"
+								type="checkbox"
+								className="switch"
+								onChange={handleShowAdSwitch}
+							/>
+							<label htmlFor="s1" id="showAdsLabel">
+								Show Ads
+							</label>
+						</li>
+						<li>
+							<input
+								id="s2"
+								type="checkbox"
+								className="switch"
+								onChange={handleAutoScrollSwitch}
+							/>
+							<label htmlFor="s2" id="autoScrollLabel">
+								Auto Scroll
+							</label>
+						</li>
+					</ul>
+				)}
 				<div id="metrics_container">
 					<div className="lifeTimeActivityContainer">
 						<h3>Lifetime Activity</h3>

@@ -3,6 +3,7 @@ import {
 	AUTO_SCROLL_OFF_MESSAGE,
 	SHOW_AD_OFF_MESSAGE,
 	SHOW_AD_ON_MESSAGE,
+	GET_CURRENT_URL,
 } from "../common/constant";
 import { getDataFromStorage, setDataInStorage } from "../common/storageUtil";
 import {
@@ -14,7 +15,7 @@ import {
 	STORAGE_KEY_TOTAL_FAVORITES,
 	STORAGE_KEY_TOTAL_AD_DOMAIN,
 	STORAGE_KEY_SETTINGS_AUTO_SCROLL,
-	STORAGE_KEY_SETTINGS_SHOW_AD
+	STORAGE_KEY_SETTINGS_SHOW_AD,
 } from "../common/constant";
 console.log("contentScript hello");
 
@@ -22,7 +23,9 @@ var state = false;
 var showAdState = false;
 
 chrome.runtime.onMessage.addListener((request, sender, sendMessage) => {
-	if (request.query === AUTO_SCROLL_ON_MESSAGE) {
+	if (request?.query === GET_CURRENT_URL) {
+		sendMessage({ ...request, url: window.location.href });
+	} else if (request.query === AUTO_SCROLL_ON_MESSAGE) {
 		autoScrollFn("AUTO_SCROLL_ON_MESSAGE");
 	}
 	if (request.query === AUTO_SCROLL_OFF_MESSAGE) {
@@ -36,13 +39,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendMessage) => {
 	}
 });
 
-getDataFromStorage(STORAGE_KEY_SETTINGS_SHOW_AD).then((response)=>{
-	if(response){
+getDataFromStorage(STORAGE_KEY_SETTINGS_SHOW_AD).then((response) => {
+	if (response) {
 		showAdFn("SHOW_AD_ON_MESSAGE");
 	}
 });
-getDataFromStorage(STORAGE_KEY_SETTINGS_AUTO_SCROLL).then((response)=>{
-	if(response){
+getDataFromStorage(STORAGE_KEY_SETTINGS_AUTO_SCROLL).then((response) => {
+	if (response) {
 		autoScrollFn("AUTO_SCROLL_ON_MESSAGE");
 	}
 });
@@ -79,17 +82,17 @@ function showAdFn(from) {
 		}, 5000);
 	}
 
-	function checkSponsored(target){
-		if(!target){
+	function checkSponsored(target) {
+		if (!target) {
 			return false;
 		}
 		var text = "Sponsored";
 		var j = 0;
 		var flag = false;
 
-		for(var i = 0; i<target.length; i++){
-			if(target.charAt(i).toLowerCase() == text.charAt(j).toLowerCase()){
-				if(text.charAt(j)=='d'){
+		for (var i = 0; i < target.length; i++) {
+			if (target.charAt(i).toLowerCase() == text.charAt(j).toLowerCase()) {
+				if (text.charAt(j) == "d") {
 					flag = true;
 				}
 				j++;
@@ -122,8 +125,11 @@ function showAdFn(from) {
 					// });
 
 					//previously below code was working
-					let targetText = (singlePost.querySelector("a[aria-label='Sponsored']") ?? singlePost.querySelector("a[aria-label='label']"))?.innerText;
-					
+					let targetText = (
+						singlePost.querySelector("a[aria-label='Sponsored']") ??
+						singlePost.querySelector("a[aria-label='label']")
+					)?.innerText;
+
 					console.log(targetText);
 
 					if (checkSponsored(targetText)) {
@@ -160,7 +166,7 @@ function autoScrollFn(from) {
 		window.scrollBy({
 			top: 1000,
 			left: 0,
-			behavior: 'smooth'
+			behavior: "smooth",
 		});
 		setTimeout(function () {
 			// var height = document.documentElement.scrollHeight;
