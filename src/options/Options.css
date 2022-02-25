@@ -169,6 +169,7 @@ body {
 	padding: 0;
 	margin: 0 0 5px 0;
 	cursor: pointer;
+	text-align: left;
 }
 
 .single-ad-container .links-container {

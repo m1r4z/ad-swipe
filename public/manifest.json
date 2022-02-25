@@ -18,9 +18,7 @@
 		}
 	],
 	"icons": {
-		"16": "img/icon-16.png",
-		"48": "img/icon-48.png",
-		"128": "img/icon-128.png"
+		"192":"adswipe_icon.png"
 	},
 	"web_accessible_resources": ["img/*.png"],
 	"options_page": "options.html",

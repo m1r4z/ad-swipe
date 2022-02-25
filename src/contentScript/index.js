@@ -147,10 +147,6 @@ function showAdFn(from) {
 							</div>
 							<div style="width: 0px; height: 24px; border: 1px solid rgb(242, 243, 248); margin-left: 5px; margin-top: 10px;">
 							</div>
-							<div style="width: 35px; height: 35px;">
-								<span style="font-size: 20px; font-weight: 600; cursor: pointer: color: #6046ff;">☆</span>
-								<span style="font-size: 20px; font-weight: 600; cursor: pointer: color: #6046ff; display: none;">★</span>
-							</div>
 							<div style="width: 0px; height: 24px; border: 1px solid rgb(242, 243, 248); margin-left: 2px; margin-top: 10px;"></div>
 						</div>
 						`;
