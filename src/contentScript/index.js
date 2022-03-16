@@ -115,8 +115,8 @@ function showAdFn(from) {
                     adLibraryLayoutDiv.innerHTML = `
 						<div style="display: flex; margin: -5px;" class="ad-library-box">
 							<div class="ad_library_container" style="display: flex; justify-content: center; align-items: center;">
-								<a class="ad_library_button" target="_blank" href=${href} style="display: inline-block; color: #fff; background: #4362BE, padding: 5px 10px; border: 2px solid #4362BE;
-								border-radius: 5px; cursor: pointer;" >
+								<a class="ad_library_button" target="_blank" href=${href} style="text-decoration: none; display: inline-block; color: #fff; background: #4362BE; padding: 5px 10px; border: 2px solid #4362BE;
+								border-radius: 5px; cursor: pointer; margin-right: 10px;" >
 									View Ad Library
 								</a>
 
@@ -139,9 +139,6 @@ function showAdFn(from) {
 									<span style="margin-left: 5px; display: inline-block;">Save Ad</span>
 								</span>
 							</div>
-							<div style="width: 0px; height: 24px; border: 1px solid rgb(242, 243, 248); margin-left: 5px; margin-top: 10px;">
-							</div>
-							<div style="width: 0px; height: 24px; border: 1px solid rgb(242, 243, 248); margin-left: 2px; margin-top: 10px;"></div>
 						</div>
 						`;
                     var parent = singlePost.querySelector(".ll8tlv6m.j83agx80.btwxx1t3.n851cfcs.hv4rvrfc.dati1w0a.pybr56ya");
