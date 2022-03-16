@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { STORAGE_KEY_SETTINGS_AUTO_SCROLL, STORAGE_KEY_SETTINGS_SHOW_AD, AUTO_SCROLL_ON_MESSAGE, AUTO_SCROLL_OFF_MESSAGE, SHOW_AD_OFF_MESSAGE, SHOW_AD_ON_MESSAGE, OPTION_PAGE_OPEN, STORAGE_KEYFB_AD, STORAGE_KEY_TODAYS_TOTAL_ADS, STORAGE_KEY_TODAYS_TOTAL_AD_DOMAIN, STORAGE_KEY_TODAYS_TOTAL_FAVORITES, STORAGE_KEY_TOTAL_ADS, STORAGE_KEY_TOTAL_AD_DOMAIN, STORAGE_KEY_TOTAL_FAVORITES, STORAGE_KEY_LAST_CHECKED_TIME, GET_CURRENT_URL } from "../common/constant";
+import { STORAGE_KEY_SETTINGS_AUTO_SCROLL, STORAGE_KEY_SETTINGS_SHOW_AD, AUTO_SCROLL_ON_MESSAGE, AUTO_SCROLL_OFF_MESSAGE, SHOW_AD_OFF_MESSAGE, SHOW_AD_ON_MESSAGE, OPTION_PAGE_OPEN, STORAGE_KEYFB_AD, STORAGE_KEY_TODAYS_TOTAL_ADS, STORAGE_KEY_TODAYS_TOTAL_AD_DOMAIN, STORAGE_KEY_TODAYS_TOTAL_FAVORITES, STORAGE_KEY_TOTAL_ADS, STORAGE_KEY_TOTAL_AD_DOMAIN, STORAGE_KEY_TOTAL_FAVORITES, STORAGE_KEY_LAST_CHECKED_TIME, GET_CURRENT_URL, STORAGE_KEY_AUTO_COLLECT, AUTO_COLLECT } from "../common/constant";
 import { addStorageChangeListener, removeStorageChangeListener, getDataFromStorage, setDataInStorage } from "../common/storageUtil";
 import Card from "./components/Card";
 import Footer from "./components/Footer";
@@ -27,6 +27,10 @@ const PopupLayout = () => {
     const [todaysTotalFavorites, setTodaysTotalFavorites] = useState(0);
     const [isDomainIsFacebook, setIsDomainIsFacebook] = useState(false);
 
+    const [scrolling, setScrolling] = useState(false);
+    const [showAds, setShowAds] = useState(false);
+    const [autoCollect, setAutoCollect] = useState(false);
+
     const storageChangeListener = (change, area) => {
         if (area === "local" && change[STORAGE_KEY_TODAYS_TOTAL_ADS]) {
             setTodaysTotalAds(change[STORAGE_KEY_TODAYS_TOTAL_ADS]?.newValue?.results);
@@ -45,6 +49,9 @@ const PopupLayout = () => {
         }
         if (area === "local" && change[STORAGE_KEY_TOTAL_FAVORITES]) {
             setTotalFavorites(change[STORAGE_KEY_TOTAL_FAVORITES]?.newValue?.results);
+        }
+        if (area === "local" && change[STORAGE_KEY_AUTO_COLLECT]) {
+            setAutoCollect(change[STORAGE_KEY_AUTO_COLLECT]?.newValue?.results);
         }
     };
     useEffect(() => {
@@ -94,17 +101,31 @@ const PopupLayout = () => {
 
         getDataFromStorage(STORAGE_KEY_SETTINGS_SHOW_AD).then((response) => {
             if (response) {
+                setShowAds(true);
                 document.querySelector("#s1") && (document.querySelector("#s1").checked = true);
             } else {
+                setShowAds(false);
                 document.querySelector("#s1") && (document.querySelector("#s1").checked = false);
             }
         });
 
         getDataFromStorage(STORAGE_KEY_SETTINGS_AUTO_SCROLL).then((response) => {
             if (response) {
+                setScrolling(true);
                 document.querySelector("#s2") && (document.querySelector("#s2").checked = true);
             } else {
+                setScrolling(false);
                 document.querySelector("#s2") && (document.querySelector("#s2").checked = false);
+            }
+        });
+
+        getDataFromStorage(STORAGE_KEY_AUTO_COLLECT).then((response) => {
+            if (response) {
+                setAutoCollect(true);
+                document.querySelector("#auto-collect") && (document.querySelector("#auto-collect").checked = true);
+            } else {
+                setAutoCollect(false);
+                document.querySelector("#auto-collect") && (document.querySelector("#auto-collect").checked = false);
             }
         });
 
@@ -127,9 +148,23 @@ const PopupLayout = () => {
         if (e.target.checked) {
             setDataInStorage(STORAGE_KEY_SETTINGS_AUTO_SCROLL, true);
             chrome.runtime.sendMessage({ query: AUTO_SCROLL_ON_MESSAGE });
+            setScrolling(true);
         } else {
             setDataInStorage(STORAGE_KEY_SETTINGS_AUTO_SCROLL, false);
             chrome.runtime.sendMessage({ query: AUTO_SCROLL_OFF_MESSAGE });
+            setScrolling(false);
+        }
+    };
+
+    const handleAutoCollectSwitch = (e) => {
+        if (e.target.checked) {
+            setDataInStorage(STORAGE_KEY_AUTO_COLLECT, true);
+            chrome.runtime.sendMessage({ query: AUTO_COLLECT });
+            setAutoCollect(true);
+        } else {
+            setDataInStorage(STORAGE_KEY_AUTO_COLLECT, false);
+            chrome.runtime.sendMessage({ query: AUTO_COLLECT });
+            setAutoCollect(false);
         }
     };
 
@@ -137,9 +172,11 @@ const PopupLayout = () => {
         if (e.target.checked) {
             setDataInStorage(STORAGE_KEY_SETTINGS_SHOW_AD, true);
             chrome.runtime.sendMessage({ query: SHOW_AD_ON_MESSAGE });
+            setShowAds(true);
         } else {
             setDataInStorage(STORAGE_KEY_SETTINGS_SHOW_AD, false);
             chrome.runtime.sendMessage({ query: SHOW_AD_OFF_MESSAGE });
+            setShowAds(false);
         }
     };
 
@@ -172,23 +209,6 @@ const PopupLayout = () => {
         setShowMainPage(true);
     };
 
-    const [scrolling, setScrolling] = useState(false);
-    const [showAds, setShowAds] = useState(false);
-    const [autoCollect, setAutoCollect] = useState(false);
-    const handleScrollingClick = () => {
-        setScrolling((prev) => !prev);
-    };
-
-    const handleShowAdsClick = () => {
-        setShowAds((prev) => !prev);
-    };
-
-    const handleAutoCollectSwitch = () => {};
-
-    const handleAutoCollectClick = () => {
-        setAutoCollect((prev) => !prev);
-    };
-
     const handleSettingsClickFromOptions = () => {
         setShowMainPage(false);
         setShowSettingsPage(true);
@@ -213,7 +233,7 @@ const PopupLayout = () => {
                 {showMainPage ? (
                     <>
                         <div className="auto-collect-container">
-                            <input id="auto-collect" type="checkbox" className="switch" onChange={handleAutoCollectSwitch} onClick={handleAutoCollectClick} />
+                            <input id="auto-collect" type="checkbox" className="switch" onChange={handleAutoCollectSwitch} checked={autoCollect} />
                             <label htmlFor="auto-collect" id="auto-collect-label">
                                 <span style={{ marginLeft: "10px", display: "inline-block" }}>Auto Collect - </span>
                                 <span className="status auto-collect-status">{autoCollect ? "On" : "Off"}</span>
@@ -244,7 +264,7 @@ const PopupLayout = () => {
                                 <span className="status auto-scrolling-status">{scrolling ? "On" : "Off"}</span>
                                 <Info />
                             </div>
-                            <input id="s2" type="checkbox" className="switch" onClick={handleScrollingClick} onChange={handleAutoScrollSwitch} />
+                            <input id="s2" type="checkbox" className="switch" checked={scrolling} onChange={handleAutoScrollSwitch} />
                         </div>
                         <div className="show-ads-container">
                             <div className="text-container">
@@ -252,7 +272,7 @@ const PopupLayout = () => {
                                 <span className="status show-ads-status">{showAds ? "On" : "Off"}</span>
                                 <Info />
                             </div>
-                            <input id="s1" type="checkbox" className="switch" onClick={handleShowAdsClick} onChange={handleShowAdSwitch} />
+                            <input id="s1" type="checkbox" className="switch" checked={showAds} onChange={handleShowAdSwitch} />
                         </div>
                     </div>
                 ) : null}

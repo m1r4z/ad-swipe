@@ -15,3 +15,6 @@ export const STORAGE_KEY_TODAYS_TOTAL_FAVORITES = "todaysTotalFavorites";
 export const STORAGE_KEY_SETTINGS_SHOW_AD = "storageKeySettingsShowAd";
 export const STORAGE_KEY_SETTINGS_AUTO_SCROLL = "storageKeySettingsAutoScroll";
 export const STORAGE_KEY_LAST_CHECKED_TIME = "storageKeyLastCheckedTime";
+
+export const STORAGE_KEY_AUTO_COLLECT = "storageKeyAutoCollect";
+export const AUTO_COLLECT = "autoCollect";

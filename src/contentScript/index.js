@@ -1,22 +1,6 @@
-import {
-	AUTO_SCROLL_ON_MESSAGE,
-	AUTO_SCROLL_OFF_MESSAGE,
-	SHOW_AD_OFF_MESSAGE,
-	SHOW_AD_ON_MESSAGE,
-	GET_CURRENT_URL,
-} from "../common/constant";
+import { AUTO_SCROLL_ON_MESSAGE, AUTO_SCROLL_OFF_MESSAGE, SHOW_AD_OFF_MESSAGE, SHOW_AD_ON_MESSAGE, GET_CURRENT_URL, STORAGE_KEY_AUTO_COLLECT } from "../common/constant";
 import { getDataFromStorage, setDataInStorage } from "../common/storageUtil";
-import {
-	STORAGE_KEY_FB_AD,
-	STORAGE_KEY_TODAYS_TOTAL_ADS,
-	STORAGE_KEY_TODAYS_TOTAL_FAVORITES,
-	STORAGE_KEY_TODAYS_TOTAL_AD_DOMAIN,
-	STORAGE_KEY_TOTAL_ADS,
-	STORAGE_KEY_TOTAL_FAVORITES,
-	STORAGE_KEY_TOTAL_AD_DOMAIN,
-	STORAGE_KEY_SETTINGS_AUTO_SCROLL,
-	STORAGE_KEY_SETTINGS_SHOW_AD,
-} from "../common/constant";
+import { STORAGE_KEY_FB_AD, STORAGE_KEY_TODAYS_TOTAL_ADS, STORAGE_KEY_TODAYS_TOTAL_FAVORITES, STORAGE_KEY_TODAYS_TOTAL_AD_DOMAIN, STORAGE_KEY_TOTAL_ADS, STORAGE_KEY_TOTAL_FAVORITES, STORAGE_KEY_TOTAL_AD_DOMAIN, STORAGE_KEY_SETTINGS_AUTO_SCROLL, STORAGE_KEY_SETTINGS_SHOW_AD } from "../common/constant";
 console.log("contentScript hello");
 
 var state = false;
@@ -24,60 +8,60 @@ var showAdState = false;
 var currentAdsArray = [];
 
 chrome.runtime.onMessage.addListener((request, sender, sendMessage) => {
-	if (request?.query === GET_CURRENT_URL) {
-		sendMessage({ ...request, url: window.location.href });
-	} else if (request.query === AUTO_SCROLL_ON_MESSAGE) {
-		autoScrollFn("AUTO_SCROLL_ON_MESSAGE");
-	}
-	if (request.query === AUTO_SCROLL_OFF_MESSAGE) {
-		autoScrollFn("AUTO_SCROLL_OFF_MESSAGE");
-	}
-	if (request.query === SHOW_AD_ON_MESSAGE) {
-		showAdFn("SHOW_AD_ON_MESSAGE");
-	}
-	if (request.query === SHOW_AD_OFF_MESSAGE) {
-		showAdFn("SHOW_AD_OFF_MESSAGE");
-	}
+    if (request?.query === GET_CURRENT_URL) {
+        sendMessage({ ...request, url: window.location.href });
+    } else if (request.query === AUTO_SCROLL_ON_MESSAGE) {
+        autoScrollFn("AUTO_SCROLL_ON_MESSAGE");
+    }
+    if (request.query === AUTO_SCROLL_OFF_MESSAGE) {
+        autoScrollFn("AUTO_SCROLL_OFF_MESSAGE");
+    }
+    if (request.query === SHOW_AD_ON_MESSAGE) {
+        showAdFn("SHOW_AD_ON_MESSAGE");
+    }
+    if (request.query === SHOW_AD_OFF_MESSAGE) {
+        showAdFn("SHOW_AD_OFF_MESSAGE");
+    }
 });
 
 getDataFromStorage(STORAGE_KEY_SETTINGS_SHOW_AD).then((response) => {
-	if (response) {
-		showAdFn("SHOW_AD_ON_MESSAGE");
-	}
+    if (response) {
+        showAdFn("SHOW_AD_ON_MESSAGE");
+    }
 });
 getDataFromStorage(STORAGE_KEY_SETTINGS_AUTO_SCROLL).then((response) => {
-	if (response) {
-		autoScrollFn("AUTO_SCROLL_ON_MESSAGE");
-	}
+    if (response) {
+        autoScrollFn("AUTO_SCROLL_ON_MESSAGE");
+    }
 });
 
 function checkSponsored(target) {
-	console.log("target ", target);
-	if (!target) {
-		return false;
-	}
-	var text = "Sponsored";
-	var j = 0;
-	var flag = false;
+    console.log("target ", target);
+    if (!target) {
+        return false;
+    }
+    var text = "Sponsored";
+    var j = 0;
+    var flag = false;
 
-	for (var i = 0; i < target.length; i++) {
-		if (target.charAt(i).toLowerCase() == text.charAt(j).toLowerCase()) {
-			if (text.charAt(j) == "d") {
-				flag = true;
-			}
-			j++;
-		}
-	}
-	console.log("flag ", flag);
-	return flag;
+    for (var i = 0; i < target.length; i++) {
+        if (target.charAt(i).toLowerCase() == text.charAt(j).toLowerCase()) {
+            if (text.charAt(j) == "d") {
+                flag = true;
+            }
+            j++;
+        }
+    }
+    console.log("flag ", flag);
+    return flag;
 }
 
 function showAdFn(from) {
-	console.log(from);
-	if (from === "SHOW_AD_ON_MESSAGE") {
-		showAdState = true;
-		var headofdoc = document.getElementsByTagName("head")[0];
-		var mainCss = `
+    console.log(from);
+    if (from === "SHOW_AD_ON_MESSAGE") {
+        showAdState = true;
+        var headofdoc = document.getElementsByTagName("head")[0];
+        var mainCss = `
             div [data-pagelet*="FeedUnit"]{
                 visibility: hidden;
             }
@@ -85,60 +69,50 @@ function showAdFn(from) {
                 visibility: visible;
             }
         `;
-		var s = document.createElement("style");
-		s.setAttribute("type", "text/css");
-		s.setAttribute("adswipe", "true");
-		s.appendChild(document.createTextNode(mainCss));
-		headofdoc.appendChild(s);
-	}
-	if (from === "SHOW_AD_OFF_MESSAGE") {
-		showAdState = false;
-		document.querySelectorAll("style").forEach(function (file) {
-			if (file.getAttribute("adswipe")) {
-				file.remove();
-				window.location.reload();
-			}
-		});
-		setTimeout(function () {
-			window.location.reload();
-		}, 5000);
-	}
+        var s = document.createElement("style");
+        s.setAttribute("type", "text/css");
+        s.setAttribute("adswipe", "true");
+        s.appendChild(document.createTextNode(mainCss));
+        headofdoc.appendChild(s);
+    }
+    if (from === "SHOW_AD_OFF_MESSAGE") {
+        showAdState = false;
+        document.querySelectorAll("style").forEach(function (file) {
+            if (file.getAttribute("adswipe")) {
+                file.remove();
+                window.location.reload();
+            }
+        });
+        setTimeout(function () {
+            window.location.reload();
+        }, 5000);
+    }
 
-	(function showAdsOnly() {
-		setTimeout(function () {
-			console.log("timeout called");
-			document
-				.querySelectorAll('div[data-pagelet*="FeedUnit"]')
-				.forEach(function (singlePost) {
-					if (singlePost.querySelector(".ad-library-box")) {
-						return;
-					}
+    (function showAdsOnly() {
+        setTimeout(function () {
+            console.log("timeout called");
+            document.querySelectorAll('div[data-pagelet*="FeedUnit"]').forEach(function (singlePost) {
+                if (singlePost.querySelector(".ad-library-box")) {
+                    return;
+                }
 
-					let targetText = (
-						singlePost.querySelector("a[aria-label='Sponsored']") ??
-						singlePost.querySelector("a[aria-label='label']") ??
-						singlePost.querySelector("a.oajrlxb2.g5ia77u1.qu0x051f.esr5mh6w.e9989ue4.r7d6kgcz.rq0escxv.nhd2j8a9.nc684nl6.p7hjln8o.kvgmc6g5.cxmmr5t8.oygrvhab.hcukyx3x.jb3vyjys.rz4wbd8a.qt6c0cv9.a8nywdso.i1ao9s8h.esuyzwwr.f1sip0of.lzcic4wl.gmql0nx0.gpro0wi8.b1v8xokw")
-					)?.innerText;
+                let targetText = (singlePost.querySelector("a[aria-label='Sponsored']") ?? singlePost.querySelector("a[aria-label='label']") ?? singlePost.querySelector("a.oajrlxb2.g5ia77u1.qu0x051f.esr5mh6w.e9989ue4.r7d6kgcz.rq0escxv.nhd2j8a9.nc684nl6.p7hjln8o.kvgmc6g5.cxmmr5t8.oygrvhab.hcukyx3x.jb3vyjys.rz4wbd8a.qt6c0cv9.a8nywdso.i1ao9s8h.esuyzwwr.f1sip0of.lzcic4wl.gmql0nx0.gpro0wi8.b1v8xokw"))?.innerText;
 
-					var filteredAd = currentAdsArray.filter(
-						(ad) =>
-							singlePost.innerHTML.includes(ad.name) ||
-							singlePost.innerHTML.includes(ad.url)
-					);
+                var filteredAd = currentAdsArray.filter((ad) => singlePost.innerHTML.includes(ad.name) || singlePost.innerHTML.includes(ad.url));
 
-					if (checkSponsored(targetText) && filteredAd.length > 0) {
-						// this is ad post
-						singlePost.style.visibility = "visible";
-						singlePost.classList.add("visible");
-						singlePost.classList.add("ad");
-						singlePost.classList.remove("not-ad");
-						singlePost.style.display = "block";
+                if (checkSponsored(targetText) && filteredAd.length > 0) {
+                    // this is ad post
+                    singlePost.style.visibility = "visible";
+                    singlePost.classList.add("visible");
+                    singlePost.classList.add("ad");
+                    singlePost.classList.remove("not-ad");
+                    singlePost.style.display = "block";
 
-						console.log("filteredAd: ", filteredAd);
+                    console.log("filteredAd: ", filteredAd);
 
-						var href = `https://www.facebook.com/ads/library/?active_status=all&ad_type=all&view_all_page_id=${filteredAd?.[0].page_id}`;
-						var adLibraryLayoutDiv = document.createElement("div");
-						adLibraryLayoutDiv.innerHTML = `
+                    var href = `https://www.facebook.com/ads/library/?active_status=all&ad_type=all&view_all_page_id=${filteredAd?.[0].page_id}`;
+                    var adLibraryLayoutDiv = document.createElement("div");
+                    adLibraryLayoutDiv.innerHTML = `
 						<div style="display: flex; margin: -5px;" class="ad-library-box">
 							<div class="ad_library_container" style="display: flex; justify-content: center; align-items: center;">
 								<a class="ad_library_button" target="_blank" href=${href} style="color: #6046ff; padding: 10px 15px; border: 2px solid #6046ff;
@@ -151,114 +125,118 @@ function showAdFn(from) {
 							<div style="width: 0px; height: 24px; border: 1px solid rgb(242, 243, 248); margin-left: 2px; margin-top: 10px;"></div>
 						</div>
 						`;
-						var parent = singlePost.querySelector(
-							".ll8tlv6m.j83agx80.btwxx1t3.n851cfcs.hv4rvrfc.dati1w0a.pybr56ya"
-						);
-						var child = singlePost.querySelector(
-							".nqmvxvec.j83agx80.jnigpg78.cxgpxx05.dflh9lhu.sj5x9vvc.scb9dxdr.odw8uiq3"
-						);
-						if (singlePost.querySelectorAll(".ad_library_container").length == 0) {
-							parent.insertBefore(adLibraryLayoutDiv, child);
-						}
-					} else {
-						singlePost.style.display = "none";
-						singlePost.classList.add("not-ad");
-						singlePost.classList.remove("ad");
-					}
-				});
-			if (showAdState) {
-				showAdsOnly();
-			}
-		}, 3000);
-	})();
+                    var parent = singlePost.querySelector(".ll8tlv6m.j83agx80.btwxx1t3.n851cfcs.hv4rvrfc.dati1w0a.pybr56ya");
+                    var child = singlePost.querySelector(".nqmvxvec.j83agx80.jnigpg78.cxgpxx05.dflh9lhu.sj5x9vvc.scb9dxdr.odw8uiq3");
+                    if (singlePost.querySelectorAll(".ad_library_container").length == 0) {
+                        parent.insertBefore(adLibraryLayoutDiv, child);
+                    }
+                } else {
+                    singlePost.style.display = "none";
+                    singlePost.classList.add("not-ad");
+                    singlePost.classList.remove("ad");
+                }
+            });
+            if (showAdState) {
+                showAdsOnly();
+            }
+        }, 3000);
+    })();
 }
 
 function autoScrollFn(from) {
-	if (from === "AUTO_SCROLL_ON_MESSAGE") {
-		state = true;
-	}
-	if (from === "AUTO_SCROLL_OFF_MESSAGE") {
-		state = false;
-	}
+    if (from === "AUTO_SCROLL_ON_MESSAGE") {
+        state = true;
+    }
+    if (from === "AUTO_SCROLL_OFF_MESSAGE") {
+        state = false;
+    }
 
-	(function autoScroll() {
-		window.scrollBy({
-			top: 1000,
-			left: 0,
-			behavior: "smooth",
-		});
-		setTimeout(function () {
-			// var height = document.documentElement.scrollHeight;
-			if (state) {
-				autoScroll();
-			}
-		}, 1000);
-	})();
+    (function autoScroll() {
+        window.scrollBy({
+            top: 1000,
+            left: 0,
+            behavior: "smooth",
+        });
+        setTimeout(function () {
+            // var height = document.documentElement.scrollHeight;
+            if (state) {
+                autoScroll();
+            }
+        }, 1000);
+    })();
 }
 
 window.addEventListener(
-	"getChromeDataForAdSwipe",
-	function (e) {
-		console.log(e.detail);
-		var t = JSON.parse(e.detail);
+    "getChromeDataForAdSwipe",
+    function (e) {
+        getDataFromStorage(STORAGE_KEY_AUTO_COLLECT).then((response) => {
+            console.log(e.detail);
+            if (!response) {
+                console.log("ad will not collect!!");
+                return;
+            } else {
+                console.log("ad will collect!!");
+            }
+            var t = JSON.parse(e.detail);
 
-		currentAdsArray.push(t);
+            currentAdsArray.push(t);
 
-		getDataFromStorage(STORAGE_KEY_FB_AD).then((response) => {
-			if (response) {
-				console.log(response);
-				response = [...response, t];
-			} else {
-				response = [t];
-			}
-			setDataInStorage(STORAGE_KEY_FB_AD, response).then(() => {
-				console.log("Data inserted successfully");
+            getDataFromStorage(STORAGE_KEY_FB_AD).then((response) => {
+                if (response) {
+                    console.log(response);
+                    response = [...response, t];
+                } else {
+                    response = [t];
+                }
+                setDataInStorage(STORAGE_KEY_FB_AD, response).then(() => {
+                    console.log("Data inserted successfully");
 
-				getDataFromStorage(STORAGE_KEY_TODAYS_TOTAL_ADS).then((response) => {
-					response = ++response;
-					setDataInStorage(STORAGE_KEY_TODAYS_TOTAL_ADS, response).then(() => {
-						console.log("Todays Total Ads Incremented");
-					});
-				});
-				getDataFromStorage(STORAGE_KEY_TODAYS_TOTAL_AD_DOMAIN).then((response) => {
-					response = ++response;
-					setDataInStorage(STORAGE_KEY_TODAYS_TOTAL_AD_DOMAIN, response).then(() => {
-						console.log("Todays Total Ads domain Incremented");
-					});
-				});
-				// getDataFromStorage(STORAGE_KEY_TODAYS_TOTAL_FAVORITES).then((response)=>{
-				//     response = ++response;
-				//     setDataInStorage(STORAGE_KEY_TODAYS_TOTAL_FAVORITES, response).then(()=>{
-				//         console.log('Todays Total Ads Favorites Incremented');
-				//     })
-				// });
-				getDataFromStorage(STORAGE_KEY_TOTAL_ADS).then((response) => {
-					response = ++response;
-					setDataInStorage(STORAGE_KEY_TOTAL_ADS, response).then(() => {
-						console.log("Total Ads Incremented");
-					});
-				});
-				getDataFromStorage(STORAGE_KEY_TOTAL_AD_DOMAIN).then((response) => {
-					response = ++response;
-					setDataInStorage(STORAGE_KEY_TOTAL_AD_DOMAIN, response).then(() => {
-						console.log("Total Ads Domain Incremented");
-					});
-				});
-				// getDataFromStorage(STORAGE_KEY_TOTAL_FAVORITES).then((response)=>{
-				//     response = ++response;
-				//     setDataInStorage(STORAGE_KEY_TOTAL_FAVORITES, response).then(()=>{
-				//         console.log('Total Ads Favorites Incremented');
-				//     })
-				// });
-			});
-		});
-	},
-	!1
+                    getDataFromStorage(STORAGE_KEY_TODAYS_TOTAL_ADS).then((response) => {
+                        response = ++response;
+                        setDataInStorage(STORAGE_KEY_TODAYS_TOTAL_ADS, response).then(() => {
+                            console.log("Todays Total Ads Incremented");
+                        });
+                    });
+                    getDataFromStorage(STORAGE_KEY_TODAYS_TOTAL_AD_DOMAIN).then((response) => {
+                        response = ++response;
+                        setDataInStorage(STORAGE_KEY_TODAYS_TOTAL_AD_DOMAIN, response).then(() => {
+                            console.log("Todays Total Ads domain Incremented");
+                        });
+                    });
+                    // getDataFromStorage(STORAGE_KEY_TODAYS_TOTAL_FAVORITES).then((response)=>{
+                    //     response = ++response;
+                    //     setDataInStorage(STORAGE_KEY_TODAYS_TOTAL_FAVORITES, response).then(()=>{
+                    //         console.log('Todays Total Ads Favorites Incremented');
+                    //     })
+                    // });
+                    getDataFromStorage(STORAGE_KEY_TOTAL_ADS).then((response) => {
+                        response = ++response;
+                        setDataInStorage(STORAGE_KEY_TOTAL_ADS, response).then(() => {
+                            console.log("Total Ads Incremented");
+                        });
+                    });
+                    getDataFromStorage(STORAGE_KEY_TOTAL_AD_DOMAIN).then((response) => {
+                        response = ++response;
+                        setDataInStorage(STORAGE_KEY_TOTAL_AD_DOMAIN, response).then(() => {
+                            console.log("Total Ads Domain Incremented");
+                        });
+                    });
+                    // getDataFromStorage(STORAGE_KEY_TOTAL_FAVORITES).then((response)=>{
+                    //     response = ++response;
+                    //     setDataInStorage(STORAGE_KEY_TOTAL_FAVORITES, response).then(()=>{
+                    //         console.log('Total Ads Favorites Incremented');
+                    //     })
+                    // });
+                });
+            });
+        });
+    },
+    !1
 );
 
 var r = document.createElement("script");
 r.innerHTML =
-	"\
+    "\
     const origOpen2 = XMLHttpRequest.prototype.open;\
     XMLHttpRequest.prototype.open = function() {\
         this.addEventListener('load', function() {\
