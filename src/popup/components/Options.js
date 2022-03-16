@@ -3,19 +3,19 @@ import Logoff from "../svg-components/Logoff";
 import Settings from "../svg-components/Settings";
 import WebPortal from "../svg-components/WebPortal";
 
-const Options = () => {
+const Options = ({ handleSettingsClickFromOptions }) => {
     return (
         <div className="options-container">
             <div className="options-inner-container">
                 <div className="angle"></div>
                 <div className="options-list">
-                    <div className="option">
+                    {/* <div className="option">
                         <span className="option-icon">
                             <WebPortal />
                         </span>
                         Web Portal
-                    </div>
-                    <div className="option">
+                    </div> */}
+                    <div className="option" onClick={handleSettingsClickFromOptions}>
                         <span className="option-icon">
                             <Settings />
                         </span>

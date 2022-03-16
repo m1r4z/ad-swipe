@@ -188,6 +188,11 @@ const PopupLayout = () => {
     const handleAutoCollectClick = () => {
         setAutoCollect((prev) => !prev);
     };
+
+    const handleSettingsClickFromOptions = () => {
+        setShowMainPage(false);
+        setShowSettingsPage(true);
+    };
     return (
         <>
             <div className="main-container" onClick={handlePopupClick}>
@@ -251,7 +256,7 @@ const PopupLayout = () => {
                         </div>
                     </div>
                 ) : null}
-                {showOptionsComponent ? <Options /> : null}
+                {showOptionsComponent ? <Options handleSettingsClickFromOptions={handleSettingsClickFromOptions} /> : null}
                 <Footer />
             </div>
             {/* <div className="main-container">
