@@ -152,6 +152,7 @@ const PopupLayout = () => {
     const [showOptionsComponent, setShowOptionsComponent] = useState(false);
     const [showSettingsPage, setShowSettingsPage] = useState(false);
     const [showMainPage, setShowMainPage] = useState(true);
+
     const optionClick = (e) => {
         setShowOptionsComponent(true);
         e.stopPropagation();
@@ -169,6 +170,23 @@ const PopupLayout = () => {
     const handleBackClick = () => {
         setShowSettingsPage(false);
         setShowMainPage(true);
+    };
+
+    const [scrolling, setScrolling] = useState(false);
+    const [showAds, setShowAds] = useState(false);
+    const [autoCollect, setAutoCollect] = useState(false);
+    const handleScrollingClick = () => {
+        setScrolling((prev) => !prev);
+    };
+
+    const handleShowAdsClick = () => {
+        setShowAds((prev) => !prev);
+    };
+
+    const handleAutoCollectSwitch = () => {};
+
+    const handleAutoCollectClick = () => {
+        setAutoCollect((prev) => !prev);
     };
     return (
         <>
@@ -190,9 +208,10 @@ const PopupLayout = () => {
                 {showMainPage ? (
                     <>
                         <div className="auto-collect-container">
-                            <input id="auto-collect" type="checkbox" className="switch" />
+                            <input id="auto-collect" type="checkbox" className="switch" onChange={handleAutoCollectSwitch} onClick={handleAutoCollectClick} />
                             <label htmlFor="auto-collect" id="auto-collect-label">
-                                Auto Collect - On
+                                <span style={{ marginLeft: "10px", display: "inline-block" }}>Auto Collect - </span>
+                                <span className="status auto-collect-status">{autoCollect ? "On" : "Off"}</span>
                             </label>
                             <Info />
                         </div>
@@ -217,18 +236,18 @@ const PopupLayout = () => {
                         <div className="auto-scrolling-container">
                             <div className="text-container">
                                 <span className="text">Auto Scrolling - </span>
-                                <span className="status auto-scrolling-status">On</span>
+                                <span className="status auto-scrolling-status">{scrolling ? "On" : "Off"}</span>
                                 <Info />
                             </div>
-                            <input id="s2" type="checkbox" className="switch" onChange={handleAutoScrollSwitch} />
+                            <input id="s2" type="checkbox" className="switch" onClick={handleScrollingClick} onChange={handleAutoScrollSwitch} />
                         </div>
                         <div className="show-ads-container">
                             <div className="text-container">
-                                <span className="text">Auto Scrolling - </span>
-                                <span className="status show-ads-status">On</span>
+                                <span className="text">Show Ads Only - </span>
+                                <span className="status show-ads-status">{showAds ? "On" : "Off"}</span>
                                 <Info />
                             </div>
-                            <input id="s1" type="checkbox" className="switch" onChange={handleShowAdSwitch} />
+                            <input id="s1" type="checkbox" className="switch" onClick={handleShowAdsClick} onChange={handleShowAdSwitch} />
                         </div>
                     </div>
                 ) : null}

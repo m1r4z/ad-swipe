@@ -273,14 +273,14 @@
 @supports (-webkit-appearance: none) or (-moz-appearance: none) {
     input[type="checkbox"],
     input[type="radio"] {
-        --active: #275efe;
-        --active-inner: #fff;
+        --active: #fff;
+        --active-inner: #2ad273;
         --focus: 2px rgba(39, 94, 254, 0.3);
-        --border: #fff;
-        --border-hover: #275efe;
-        --background: #bbc1e1;
-        --disabled: #f6f8ff;
-        --disabled-inner: #e1e6f9;
+        --border: #707070;
+        --border-hover: #707070;
+        --background: #fff;
+        --disabled: #fff;
+        --disabled-inner: #fff;
         -webkit-appearance: none;
         -moz-appearance: none;
         height: 32px;
