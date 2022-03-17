@@ -1,3 +1,4 @@
+import ReactDOM from "react-dom";
 import {
 	AUTO_SCROLL_ON_MESSAGE,
 	AUTO_SCROLL_OFF_MESSAGE,
@@ -18,7 +19,7 @@ import {
 	STORAGE_KEY_SETTINGS_AUTO_SCROLL,
 	STORAGE_KEY_SETTINGS_SHOW_AD,
 } from "../common/constant";
-console.log("contentScript hello");
+import AdLibraryButtons from "./AdLibraryButtons";
 
 var state = false;
 var showAdState = false;
@@ -73,17 +74,69 @@ function checkSponsored(target) {
 	return flag;
 }
 
+(function showButtonsOnFeed() {
+	document.querySelectorAll("div[aria-posinset]").forEach(function (singlePost) {
+		//console.log("showButtonsOnFeed: I am here");
+		if (singlePost.querySelector(".ad-library-box") || singlePost.querySelector(".not-ad")) {
+			console.log("showButtonsOnFeed: skipping");
+			return;
+		}
+
+		let targetText = (
+			singlePost.querySelector("a[aria-label='Sponsored']") ??
+			singlePost.querySelector("a[aria-label='label']") ??
+			singlePost.querySelector(
+				"a.oajrlxb2.g5ia77u1.qu0x051f.esr5mh6w.e9989ue4.r7d6kgcz.rq0escxv.nhd2j8a9.nc684nl6.p7hjln8o.kvgmc6g5.cxmmr5t8.oygrvhab.hcukyx3x.jb3vyjys.rz4wbd8a.qt6c0cv9.a8nywdso.i1ao9s8h.esuyzwwr.f1sip0of.lzcic4wl.gmql0nx0.gpro0wi8.b1v8xokw"
+			)
+		)?.innerText;
+
+		var filteredAd = currentAdsArray.filter(
+			(ad) => singlePost.innerHTML.includes(ad.name) || singlePost.innerHTML.includes(ad.url)
+		);
+		console.log("filteredAd: ", filteredAd, " checkSponsored: " + checkSponsored(targetText));
+
+		if (checkSponsored(targetText) && filteredAd.length > 0) {
+			console.log("showButtonsOnFeed: this is an ad post");
+
+			var adLibraryLayoutDiv = document.createElement("div");
+			adLibraryLayoutDiv.setAttribute("id", "ad_swipe_ad_library");
+			var parent = singlePost.querySelector(
+				".ll8tlv6m.j83agx80.btwxx1t3.n851cfcs.hv4rvrfc.dati1w0a.pybr56ya"
+			);
+			var child = singlePost.querySelector(
+				".nqmvxvec.j83agx80.jnigpg78.cxgpxx05.dflh9lhu.sj5x9vvc.scb9dxdr.odw8uiq3"
+			);
+			if (singlePost.querySelectorAll(".ad_library_container").length == 0) {
+				parent.insertBefore(adLibraryLayoutDiv, child);
+			}
+
+			ReactDOM.render(
+				<AdLibraryButtons filteredAd={filteredAd} />,
+				singlePost.querySelector("#ad_swipe_ad_library")
+			);
+		} else if (checkSponsored(targetText)) {
+			console.log("showButtonsOnFeed: hiding");
+			singlePost.style.display = "none";
+		}
+	});
+
+	setTimeout(function () {
+		console.log("timeout called");
+		showButtonsOnFeed();
+	}, 3000);
+})();
+
 function showAdFn(from) {
 	console.log(from);
 	if (from === "SHOW_AD_ON_MESSAGE") {
 		showAdState = true;
 		var headofdoc = document.getElementsByTagName("head")[0];
 		var mainCss = `
-            div [data-pagelet*="FeedUnit"]{
-                visibility: hidden;
+            div [aria-posinset]{
+                display: none;
             }
             .visible {
-                visibility: visible;
+                display: block;
             }
         `;
 		var s = document.createElement("style");
@@ -92,6 +145,7 @@ function showAdFn(from) {
 		s.appendChild(document.createTextNode(mainCss));
 		headofdoc.appendChild(s);
 	}
+
 	if (from === "SHOW_AD_OFF_MESSAGE") {
 		showAdState = false;
 		document.querySelectorAll("style").forEach(function (file) {
@@ -106,88 +160,50 @@ function showAdFn(from) {
 	}
 
 	(function showAdsOnly() {
+		document.querySelectorAll("div[aria-posinset]").forEach(function (singlePost) {
+			if (singlePost.querySelector(".ad-library-box")) {
+				// this is ad post
+				singlePost.style.visibility = "visible";
+				if (!singlePost.classList.contains("visible")) {
+					singlePost.classList.add("visible");
+					singlePost.classList.add("ad");
+					singlePost.classList.remove("not-ad");
+					singlePost.style.display = "block";
+				}
+				return;
+			} else if (singlePost.querySelector(".not-ad")) {
+				return;
+			}
+
+			let targetText = (
+				singlePost.querySelector("a[aria-label='Sponsored']") ??
+				singlePost.querySelector("a[aria-label='label']") ??
+				singlePost.querySelector(
+					"a.oajrlxb2.g5ia77u1.qu0x051f.esr5mh6w.e9989ue4.r7d6kgcz.rq0escxv.nhd2j8a9.nc684nl6.p7hjln8o.kvgmc6g5.cxmmr5t8.oygrvhab.hcukyx3x.jb3vyjys.rz4wbd8a.qt6c0cv9.a8nywdso.i1ao9s8h.esuyzwwr.f1sip0of.lzcic4wl.gmql0nx0.gpro0wi8.b1v8xokw"
+				)
+			)?.innerText;
+
+			var filteredAd = currentAdsArray.filter(
+				(ad) =>
+					singlePost.innerHTML.includes(ad.name) || singlePost.innerHTML.includes(ad.url)
+			);
+
+			console.log("filteredAd: ", filteredAd);
+
+			if (checkSponsored(targetText) && filteredAd.length > 0) {
+				// this is ad post
+				singlePost.classList.add("visible");
+				singlePost.style.display = "block";
+				singlePost.classList.add("ad");
+				singlePost.classList.remove("not-ad");
+			} else {
+				singlePost.style.display = "none";
+				singlePost.classList.add("not-ad");
+				singlePost.classList.remove("ad");
+			}
+		});
 		setTimeout(function () {
 			console.log("timeout called");
-			document
-				.querySelectorAll('div[data-pagelet*="FeedUnit"]')
-				.forEach(function (singlePost) {
-					if (singlePost.querySelector(".ad-library-box")) {
-						return;
-					}
-
-					let targetText = (
-						singlePost.querySelector("a[aria-label='Sponsored']") ??
-						singlePost.querySelector("a[aria-label='label']") ??
-						singlePost.querySelector(
-							"a.oajrlxb2.g5ia77u1.qu0x051f.esr5mh6w.e9989ue4.r7d6kgcz.rq0escxv.nhd2j8a9.nc684nl6.p7hjln8o.kvgmc6g5.cxmmr5t8.oygrvhab.hcukyx3x.jb3vyjys.rz4wbd8a.qt6c0cv9.a8nywdso.i1ao9s8h.esuyzwwr.f1sip0of.lzcic4wl.gmql0nx0.gpro0wi8.b1v8xokw"
-						)
-					)?.innerText;
-
-					var filteredAd = currentAdsArray.filter(
-						(ad) =>
-							singlePost.innerHTML.includes(ad.name) ||
-							singlePost.innerHTML.includes(ad.url)
-					);
-
-					if (checkSponsored(targetText) && filteredAd.length > 0) {
-						// this is ad post
-						singlePost.style.visibility = "visible";
-						singlePost.classList.add("visible");
-						singlePost.classList.add("ad");
-						singlePost.classList.remove("not-ad");
-						singlePost.style.display = "block";
-
-						console.log("filteredAd: ", filteredAd);
-
-						var href = `https://www.facebook.com/ads/library/?active_status=all&ad_type=all&view_all_page_id=${filteredAd?.[0].page_id}`;
-						var adLibraryLayoutDiv = document.createElement("div");
-						adLibraryLayoutDiv.innerHTML = `
-						<div style="display: flex; margin: -5px;" class="ad-library-box">
-							<div class="ad_library_container" style="display: flex; justify-content: center; align-items: center;">
-								<a class="ad_library_button" target="_blank" href=${href} style="text-decoration: none; display: inline-block; color: #fff; background: #4362BE; padding: 5px 10px; border: 2px solid #4362BE;
-								border-radius: 5px; cursor: pointer; margin-right: 10px; white-space: nowrap;" >
-									View Ad Library
-								</a>
-
-								<button id="save_ad_btn-${filteredAd?.[0]?.post_id}" onclick='window.dispatchEvent(new CustomEvent("handleFavoriteAd", {detail: JSON.stringify({ "post_id": ${filteredAd?.[0]?.post_id}, "isFavorite": false})}))' class="save_ad" style=" dispaly: flex; justify-content: center; align-items: center; background: #fff; color: #4362BE; border: 2px solid #4362BE; border-radius: 5px; padding: 5px 10px; cursor: pointer; white-space: nowrap;" >
-									<span class="folder_icon-${filteredAd?.[0]?.post_id}" style="display: inline-block;">
-										<svg xmlns="http://www.w3.org/2000/svg" width="14.677" height="12.332" viewBox="0 0 14.677 12.332">
-	<path id="Path_124282" data-name="Path 124282" d="M9.483,5.1H2.307a.936.936,0,0,0-.694.309.954.954,0,0,0-.242.725l.6,6.641a.943.943,0,0,0,.935.863s.865-.1,5.8,0,5.454.949,5.454.949H2.9a1.886,1.886,0,0,1-1.871-1.726l-.6-6.641A1.9,1.9,0,0,1,.757,4.973L.719,4.147A1.888,1.888,0,0,1,2.6,2.25h3.45a1.87,1.87,0,0,1,1.328.556l.778.785a1.87,1.87,0,0,0,1.329.556h3.742a1.871,1.871,0,0,1,1.388.618A1.909,1.909,0,0,1,15.1,6.216l-.937,8.366s-.748-.211-.249-5.692.249-2.761.249-2.761a.954.954,0,0,0-.242-.725.936.936,0,0,0-.693-.309ZM6.711,3.477l.667.671H2.307a1.861,1.861,0,0,0-.643.114l-.006-.133A.944.944,0,0,1,2.6,3.2h3.45a.935.935,0,0,1,.664.278Z" transform="translate(-0.427 -2.25)" fill="#434344" fill-rule="evenodd"/>
-	</svg>
-									</span>
-									<span class="folder_tick_icon-${filteredAd?.[0]?.post_id}" style="display: none;">
-										<svg xmlns="http://www.w3.org/2000/svg" width="18.34" height="12.332" viewBox="0 0 18.34 12.332">
-	<g id="Group_13776" data-name="Group 13776" transform="translate(-530.667 -28.712)">
-		<path id="Path_124282" data-name="Path 124282" d="M9.483,5.1H2.307a.936.936,0,0,0-.694.309.954.954,0,0,0-.242.725l.6,6.641a.943.943,0,0,0,.935.863h5.8v.949H2.9a1.886,1.886,0,0,1-1.871-1.726l-.6-6.641A1.9,1.9,0,0,1,.757,4.973L.719,4.147A1.888,1.888,0,0,1,2.6,2.25h3.45a1.87,1.87,0,0,1,1.328.556l.778.785a1.87,1.87,0,0,0,1.329.556h3.742a1.871,1.871,0,0,1,1.388.618A1.909,1.909,0,0,1,15.1,6.216l-.241,2.674h-.945L14.16,6.13a.954.954,0,0,0-.242-.725.936.936,0,0,0-.693-.309ZM6.711,3.477l.667.671H2.307a1.861,1.861,0,0,0-.643.114l-.006-.133A.944.944,0,0,1,2.6,3.2h3.45a.935.935,0,0,1,.664.278Z" transform="translate(530.24 26.462)" fill="#434344" fill-rule="evenodd"/>
-		<g id="folder-check" transform="translate(539.682 34.261)">
-		<path id="Path_124283" data-name="Path 124283" d="M32.7,22.747a.848.848,0,0,1,0,1.2l-5.085,5.085a.848.848,0,0,1-1.2,0L23.872,26.49a.849.849,0,0,1,1.2-1.2l1.943,1.944L31.5,22.747a.848.848,0,0,1,1.2,0Z" transform="translate(-23.623 -22.498)" fill="#434344" fill-rule="evenodd"/>
-		</g>
-	</g>
-	</svg>
-									</span>
-									<span style="margin-left: 5px; display: inline-block;">Save Ad</span>
-								</button>
-							</div>
-						</div>
-						`;
-						var parent = singlePost.querySelector(
-							".ll8tlv6m.j83agx80.btwxx1t3.n851cfcs.hv4rvrfc.dati1w0a.pybr56ya"
-						);
-						var child = singlePost.querySelector(
-							".nqmvxvec.j83agx80.jnigpg78.cxgpxx05.dflh9lhu.sj5x9vvc.scb9dxdr.odw8uiq3"
-						);
-						getDataFromStorage(STORAGE_KEY_AUTO_COLLECT).then((res) => {
-							if (!res) return;
-							if (singlePost.querySelectorAll(".ad_library_container").length == 0) {
-								parent.insertBefore(adLibraryLayoutDiv, child);
-							}
-						});
-					} else {
-						singlePost.style.display = "none";
-						singlePost.classList.add("not-ad");
-						singlePost.classList.remove("ad");
-					}
-				});
 			if (showAdState) {
 				showAdsOnly();
 			}
@@ -218,6 +234,61 @@ function autoScrollFn(from) {
 	})();
 }
 
+function collectFbAds(ad) {
+	getDataFromStorage(STORAGE_KEY_FB_AD).then((response) => {
+		if (response) {
+			console.log(response);
+			response = [...response, ad];
+		} else {
+			response = [ad];
+		}
+		setDataInStorage(STORAGE_KEY_FB_AD, response).then(() => {
+			console.log("Data inserted successfully");
+
+			getDataFromStorage(STORAGE_KEY_TODAYS_TOTAL_ADS).then((response) => {
+				response = ++response;
+				setDataInStorage(STORAGE_KEY_TODAYS_TOTAL_ADS, response).then(() => {
+					console.log("Todays Total Ads Incremented");
+				});
+			});
+			getDataFromStorage(STORAGE_KEY_TODAYS_TOTAL_AD_DOMAIN).then((response) => {
+				response = ++response;
+				setDataInStorage(STORAGE_KEY_TODAYS_TOTAL_AD_DOMAIN, response).then(() => {
+					console.log("Todays Total Ads domain Incremented");
+				});
+			});
+
+			getDataFromStorage(STORAGE_KEY_TOTAL_ADS).then((response) => {
+				response = ++response;
+				setDataInStorage(STORAGE_KEY_TOTAL_ADS, response).then(() => {
+					console.log("Total Ads Incremented");
+				});
+			});
+
+			getDataFromStorage(STORAGE_KEY_TOTAL_AD_DOMAIN).then((response) => {
+				response = ++response;
+				setDataInStorage(STORAGE_KEY_TOTAL_AD_DOMAIN, response).then(() => {
+					console.log("Total Ads Domain Incremented");
+				});
+			});
+		});
+	});
+}
+
+window.addEventListener("handleSaveAd", (e) => {
+	let obj = JSON.parse(e?.detail);
+	console.log("handleSaveAd: ", obj);
+
+	//obj = currentAdsArray?.filter((ad) => obj?.post_id === ad?.post_id)?.[0];
+
+	if (obj) {
+		collectFbAds({ ...obj, isCollected: true });
+		document.querySelector(`.folder_icon-${obj?.post_id}`).style.display = "none";
+		document.querySelector(`.folder_tick_icon-${obj?.post_id}`).style.display = "inline-block";
+		document.querySelector(`#save_ad_btn-${obj?.post_id}`).setAttribute("disabled", "true");
+	}
+});
+
 window.addEventListener("handleFavoriteAd", (e) => {
 	let obj = JSON.parse(e?.detail);
 	console.log("favorite: ", obj);
@@ -229,6 +300,17 @@ window.addEventListener("handleFavoriteAd", (e) => {
 		}
 		setDataInStorage(STORAGE_KEY_TOTAL_FAVORITES, response).then(() => {
 			console.log("Total Ads Favorites changed");
+		});
+	});
+
+	getDataFromStorage(STORAGE_KEY_TODAYS_TOTAL_FAVORITES).then((response) => {
+		if (obj?.isFavorite) {
+			response = --response;
+		} else {
+			response = ++response;
+		}
+		setDataInStorage(STORAGE_KEY_TODAYS_TOTAL_FAVORITES, response).then(() => {
+			console.log("Today total Ads Favorites changed");
 		});
 	});
 
@@ -258,68 +340,22 @@ window.addEventListener("handleFavoriteAd", (e) => {
 
 window.addEventListener(
 	"getChromeDataForAdSwipe",
-	function (e) {
+	(e) => {
 		getDataFromStorage(STORAGE_KEY_AUTO_COLLECT).then((response) => {
-			console.log(e.detail);
+			console.log("getChromeDataForAdSwipe ", e.detail);
 
 			var t = JSON.parse(e.detail);
-			currentAdsArray.push(t);
 
 			if (!response) {
 				console.log("ad will not collect!!");
+				currentAdsArray.push({ ...t, isCollected: false });
 				return;
 			} else {
+				currentAdsArray.push({ ...t, isCollected: true });
 				console.log("ad will collect!!");
 			}
 
-			getDataFromStorage(STORAGE_KEY_FB_AD).then((response) => {
-				if (response) {
-					console.log(response);
-					response = [...response, t];
-				} else {
-					response = [t];
-				}
-				setDataInStorage(STORAGE_KEY_FB_AD, response).then(() => {
-					console.log("Data inserted successfully");
-
-					getDataFromStorage(STORAGE_KEY_TODAYS_TOTAL_ADS).then((response) => {
-						response = ++response;
-						setDataInStorage(STORAGE_KEY_TODAYS_TOTAL_ADS, response).then(() => {
-							console.log("Todays Total Ads Incremented");
-						});
-					});
-					getDataFromStorage(STORAGE_KEY_TODAYS_TOTAL_AD_DOMAIN).then((response) => {
-						response = ++response;
-						setDataInStorage(STORAGE_KEY_TODAYS_TOTAL_AD_DOMAIN, response).then(() => {
-							console.log("Todays Total Ads domain Incremented");
-						});
-					});
-					// getDataFromStorage(STORAGE_KEY_TODAYS_TOTAL_FAVORITES).then((response)=>{
-					//     response = ++response;
-					//     setDataInStorage(STORAGE_KEY_TODAYS_TOTAL_FAVORITES, response).then(()=>{
-					//         console.log('Todays Total Ads Favorites Incremented');
-					//     })
-					// });
-					getDataFromStorage(STORAGE_KEY_TOTAL_ADS).then((response) => {
-						response = ++response;
-						setDataInStorage(STORAGE_KEY_TOTAL_ADS, response).then(() => {
-							console.log("Total Ads Incremented");
-						});
-					});
-					getDataFromStorage(STORAGE_KEY_TOTAL_AD_DOMAIN).then((response) => {
-						response = ++response;
-						setDataInStorage(STORAGE_KEY_TOTAL_AD_DOMAIN, response).then(() => {
-							console.log("Total Ads Domain Incremented");
-						});
-					});
-					// getDataFromStorage(STORAGE_KEY_TOTAL_FAVORITES).then((response)=>{
-					//     response = ++response;
-					//     setDataInStorage(STORAGE_KEY_TOTAL_FAVORITES, response).then(()=>{
-					//         console.log('Total Ads Favorites Incremented');
-					//     })
-					// });
-				});
-			});
+			collectFbAds({ ...t, isCollected: true });
 		});
 	},
 	!1
