@@ -236,12 +236,25 @@ function autoScrollFn(from) {
 
 function collectFbAds(ad) {
 	getDataFromStorage(STORAGE_KEY_FB_AD).then((response) => {
+		let isFound, isAdDomainFound;
+		response?.forEach((each) => {
+			if (each?.page_id == ad?.page_id) {
+				isAdDomainFound = true;
+				if (each?.post_id == ad?.post_id) {
+					isFound = true;
+				}
+			}
+		});
+
 		if (response) {
 			console.log(response);
-			response = [...response, ad];
+
+			if (!isFound) response = [...response, ad];
+			else return;
 		} else {
 			response = [ad];
 		}
+
 		setDataInStorage(STORAGE_KEY_FB_AD, response).then(() => {
 			console.log("Data inserted successfully");
 
@@ -252,6 +265,7 @@ function collectFbAds(ad) {
 				});
 			});
 			getDataFromStorage(STORAGE_KEY_TODAYS_TOTAL_AD_DOMAIN).then((response) => {
+				if (isAdDomainFound) return;
 				response = ++response;
 				setDataInStorage(STORAGE_KEY_TODAYS_TOTAL_AD_DOMAIN, response).then(() => {
 					console.log("Todays Total Ads domain Incremented");
@@ -266,6 +280,7 @@ function collectFbAds(ad) {
 			});
 
 			getDataFromStorage(STORAGE_KEY_TOTAL_AD_DOMAIN).then((response) => {
+				if (isAdDomainFound) return;
 				response = ++response;
 				setDataInStorage(STORAGE_KEY_TOTAL_AD_DOMAIN, response).then(() => {
 					console.log("Total Ads Domain Incremented");

@@ -1,6 +1,6 @@
 {
 	"manifest_version": 2,
-	"version": "0.0.2",
+	"version": "0.2.0",
 	"short_name": "Ad Swipe",
 	"name": "Ad Swipe",
 	"description": "Your one stop for all your Ad research, competition analysis and facebook advertising needs",
@@ -18,7 +18,7 @@
 		}
 	],
 	"icons": {
-		"192":"adswipe_icon.png"
+		"192": "adswipe_icon.png"
 	},
 	"web_accessible_resources": ["img/*.png"],
 	"options_page": "options.html",

@@ -29,7 +29,7 @@ import { getInfo } from "fb-video-downloader";
 import AllAdsOfAdvertiser from "./components/AllAdsOfAdvertiser";
 
 const Options = () => {
-	const [fbAds, setFbAds] = useState([{}]);
+	const [fbAds, setFbAds] = useState([]);
 	getInfo("https://www.facebook.com/100048228941124/videos/341613557702921/").then((info) =>
 		console.log(JSON.stringify(info, null, 2))
 	);
