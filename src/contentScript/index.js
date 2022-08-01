@@ -21,7 +21,7 @@ import {
 } from "../common/constant";
 import AdLibraryButtons from "./AdLibraryButtons";
 
-var state = false;
+var autoScrollState = false;
 var showAdState = false;
 var currentAdsArray = [];
 
@@ -53,170 +53,223 @@ getDataFromStorage(STORAGE_KEY_SETTINGS_AUTO_SCROLL).then((response) => {
 	}
 });
 
-function checkSponsored(target) {
-	console.log("target ", target);
-	if (!target) {
-		return false;
-	}
-	var text = "Sponsored";
-	var j = 0;
-	var flag = false;
+// function checkSponsored(target) {
+// 	console.log("target ", target);
+// 	if (!target) {
+// 		return false;
+// 	}
+// 	var text = "Sponsored";
+// 	var j = 0;
+// 	var flag = false;
 
-	for (var i = 0; i < target.length; i++) {
-		if (target.charAt(i).toLowerCase() == text.charAt(j).toLowerCase()) {
-			if (text.charAt(j) == "d") {
-				flag = true;
-			}
-			j++;
-		}
-	}
-	console.log("flag ", flag);
-	return flag;
-}
+// 	for (var i = 0; i < target.length; i++) {
+// 		if (target.charAt(i).toLowerCase() == text.charAt(j).toLowerCase()) {
+// 			if (text.charAt(j) == "d") {
+// 				flag = true;
+// 			}
+// 			j++;
+// 		}
+// 	}
+// 	console.log("flag ", flag);
+// 	return flag;
+// }
 
-(function showButtonsOnFeed() {
-	document.querySelectorAll("div[aria-posinset]").forEach(function (singlePost) {
-		//console.log("showButtonsOnFeed: I am here");
-		if (singlePost.querySelector(".ad-library-box") || singlePost.querySelector(".not-ad")) {
-			console.log("showButtonsOnFeed: skipping");
-			return;
-		}
+// (function showButtonsOnFeed() {
+// 	document.querySelectorAll("div[aria-posinset]").forEach(function (singlePost) {
+// 		//console.log("showButtonsOnFeed: I am here");
+// 		if (singlePost.querySelector(".ad-library-box") || singlePost.querySelector(".not-ad")) {
+// 			console.log("showButtonsOnFeed: skipping");
+// 			return;
+// 		}
 
-		let targetText = (
-			singlePost.querySelector("a[aria-label='Sponsored']") ??
-			singlePost.querySelector("a[aria-label='label']") ??
-			singlePost.querySelector(
-				"a.oajrlxb2.g5ia77u1.qu0x051f.esr5mh6w.e9989ue4.r7d6kgcz.rq0escxv.nhd2j8a9.nc684nl6.p7hjln8o.kvgmc6g5.cxmmr5t8.oygrvhab.hcukyx3x.jb3vyjys.rz4wbd8a.qt6c0cv9.a8nywdso.i1ao9s8h.esuyzwwr.f1sip0of.lzcic4wl.gmql0nx0.gpro0wi8.b1v8xokw"
-			)
-		)?.innerText;
+// 		let targetText = (
+// 			singlePost.querySelector("a[aria-label='Sponsored']") ??
+// 			singlePost.querySelector("a[aria-label='label']") ??
+// 			singlePost.querySelector(
+// 				"a.oajrlxb2.g5ia77u1.qu0x051f.esr5mh6w.e9989ue4.r7d6kgcz.rq0escxv.nhd2j8a9.nc684nl6.p7hjln8o.kvgmc6g5.cxmmr5t8.oygrvhab.hcukyx3x.jb3vyjys.rz4wbd8a.qt6c0cv9.a8nywdso.i1ao9s8h.esuyzwwr.f1sip0of.lzcic4wl.gmql0nx0.gpro0wi8.b1v8xokw"
+// 			)
+// 		)?.innerText;
 
-		var filteredAd = currentAdsArray.filter(
-			(ad) => singlePost.innerHTML.includes(ad.name) || singlePost.innerHTML.includes(ad.url)
-		);
-		console.log("filteredAd: ", filteredAd, " checkSponsored: " + checkSponsored(targetText));
+// 		var filteredAd = currentAdsArray.filter(
+// 			(ad) => singlePost.innerHTML.includes(ad.name) || singlePost.innerHTML.includes(ad.url)
+// 		);
+// 		console.log("filteredAd: ", filteredAd, " checkSponsored: " + checkSponsored(targetText));
 
-		if (checkSponsored(targetText) && filteredAd.length > 0) {
-			console.log("showButtonsOnFeed: this is an ad post");
+// 		if (checkSponsored(targetText) && filteredAd.length > 0) {
+// 			console.log("showButtonsOnFeed: this is an ad post");
 
-			var adLibraryLayoutDiv = document.createElement("div");
-			adLibraryLayoutDiv.setAttribute("id", "ad_swipe_ad_library");
-			var parent = singlePost.querySelector(
-				".ll8tlv6m.j83agx80.btwxx1t3.n851cfcs.hv4rvrfc.dati1w0a.pybr56ya"
-			);
-			var child = singlePost.querySelector(
-				".nqmvxvec.j83agx80.jnigpg78.cxgpxx05.dflh9lhu.sj5x9vvc.scb9dxdr.odw8uiq3"
-			);
-			if (singlePost.querySelectorAll(".ad_library_container").length == 0) {
-				parent.insertBefore(adLibraryLayoutDiv, child);
-			}
+// 			var adLibraryLayoutDiv = document.createElement("div");
+// 			adLibraryLayoutDiv.setAttribute("id", "ad_swipe_ad_library");
+// 			var parent = singlePost.querySelector(
+// 				".ll8tlv6m.j83agx80.btwxx1t3.n851cfcs.hv4rvrfc.dati1w0a.pybr56ya"
+// 			);
+// 			var child = singlePost.querySelector(
+// 				".nqmvxvec.j83agx80.jnigpg78.cxgpxx05.dflh9lhu.sj5x9vvc.scb9dxdr.odw8uiq3"
+// 			);
+// 			if (singlePost.querySelectorAll(".ad_library_container").length == 0) {
+// 				parent.insertBefore(adLibraryLayoutDiv, child);
+// 			}
 
-			ReactDOM.render(
-				<AdLibraryButtons filteredAd={filteredAd} />,
-				singlePost.querySelector("#ad_swipe_ad_library")
-			);
-		} else if (checkSponsored(targetText)) {
-			console.log("showButtonsOnFeed: hiding");
-			singlePost.style.display = "none";
-		}
-	});
+// 			ReactDOM.render(
+// 				<AdLibraryButtons filteredAd={filteredAd} />,
+// 				singlePost.querySelector("#ad_swipe_ad_library")
+// 			);
+// 		} else if (checkSponsored(targetText)) {
+// 			console.log("showButtonsOnFeed: hiding");
+// 			singlePost.style.display = "none";
+// 		}
+// 	});
 
-	setTimeout(function () {
-		console.log("timeout called");
-		showButtonsOnFeed();
-	}, 3000);
-})();
+// 	setTimeout(function () {
+// 		console.log("timeout called");
+// 		showButtonsOnFeed();
+// 	}, 3000);
+// })();
 
 function showAdFn(from) {
 	console.log(from);
 	if (from === "SHOW_AD_ON_MESSAGE") {
 		showAdState = true;
-		var headofdoc = document.getElementsByTagName("head")[0];
-		var mainCss = `
-            div [aria-posinset]{
-                display: none;
-            }
-            .visible {
-                display: block;
-            }
-        `;
-		var s = document.createElement("style");
-		s.setAttribute("type", "text/css");
-		s.setAttribute("adswipe", "true");
-		s.appendChild(document.createTextNode(mainCss));
-		headofdoc.appendChild(s);
+		// var headofdoc = document.getElementsByTagName("head")[0];
+		// var mainCss = `
+		//     div [aria-posinset]{
+		//         display: none;
+		//     }
+		//     .visible {
+		//         display: block;
+		//     }
+		// `;
+		// var s = document.createElement("style");
+		// s.setAttribute("type", "text/css");
+		// s.setAttribute("adswipe", "true");
+		// s.appendChild(document.createTextNode(mainCss));
+		// headofdoc.appendChild(s);
 	}
 
 	if (from === "SHOW_AD_OFF_MESSAGE") {
 		showAdState = false;
-		document.querySelectorAll("style").forEach(function (file) {
-			if (file.getAttribute("adswipe")) {
-				file.remove();
-				window.location.reload();
-			}
-		});
+		// document.querySelectorAll("style").forEach(function (file) {
+		// 	if (file.getAttribute("adswipe")) {
+		// 		file.remove();
+		// 		window.location.reload();
+		// 	}
+		// });
 		setTimeout(function () {
 			window.location.reload();
-		}, 5000);
+		}, 2000);
 	}
-
-	(function showAdsOnly() {
-		document.querySelectorAll("div[aria-posinset]").forEach(function (singlePost) {
-			if (singlePost.querySelector(".ad-library-box")) {
-				// this is ad post
-				singlePost.style.visibility = "visible";
-				if (!singlePost.classList.contains("visible")) {
-					singlePost.classList.add("visible");
-					singlePost.classList.add("ad");
-					singlePost.classList.remove("not-ad");
-					singlePost.style.display = "block";
-				}
-				return;
-			} else if (singlePost.querySelector(".not-ad")) {
-				return;
-			}
-
-			let targetText = (
-				singlePost.querySelector("a[aria-label='Sponsored']") ??
-				singlePost.querySelector("a[aria-label='label']") ??
-				singlePost.querySelector(
-					"a.oajrlxb2.g5ia77u1.qu0x051f.esr5mh6w.e9989ue4.r7d6kgcz.rq0escxv.nhd2j8a9.nc684nl6.p7hjln8o.kvgmc6g5.cxmmr5t8.oygrvhab.hcukyx3x.jb3vyjys.rz4wbd8a.qt6c0cv9.a8nywdso.i1ao9s8h.esuyzwwr.f1sip0of.lzcic4wl.gmql0nx0.gpro0wi8.b1v8xokw"
-				)
-			)?.innerText;
-
-			var filteredAd = currentAdsArray.filter(
-				(ad) =>
-					singlePost.innerHTML.includes(ad.name) || singlePost.innerHTML.includes(ad.url)
-			);
-
-			console.log("filteredAd: ", filteredAd);
-
-			if (checkSponsored(targetText) && filteredAd.length > 0) {
-				// this is ad post
-				singlePost.classList.add("visible");
-				singlePost.style.display = "block";
-				singlePost.classList.add("ad");
-				singlePost.classList.remove("not-ad");
-			} else {
-				singlePost.style.display = "none";
-				singlePost.classList.add("not-ad");
-				singlePost.classList.remove("ad");
-			}
-		});
-		setTimeout(function () {
-			console.log("timeout called");
-			if (showAdState) {
-				showAdsOnly();
-			}
-		}, 3000);
-	})();
 }
+
+function wait_and_attach(each, toCheckFor, state) {
+	setTimeout(() => {
+		currentAdsArray.forEach((singlePost, index) => {
+			try {
+				console.log(
+					"wait_and_attach: " +
+						(toCheckFor.includes(singlePost.name) ||
+							toCheckFor.includes(singlePost.url))
+				);
+				if (toCheckFor.includes(singlePost.name) || toCheckFor.includes(singlePost.url)) {
+					if (state) each.innerHTML = toCheckFor;
+					var parent = each.querySelector(
+						".pybr56ya.dati1w0a.hv4rvrfc.n851cfcs.btwxx1t3.j83agx80.ll8tlv6m"
+					);
+					var child = each.querySelector(
+						".nqmvxvec.j83agx80.jnigpg78.cxgpxx05.dflh9lhu.sj5x9vvc.scb9dxdr.odw8uiq3"
+					);
+
+					currentAdsArray.splice(index, 1);
+
+					var adLibraryLayoutDiv = document.createElement("div");
+					adLibraryLayoutDiv.setAttribute("id", "ad_swipe_ad_library");
+
+					if (each.querySelectorAll(".ad_library_container").length == 0) {
+						parent.insertBefore(adLibraryLayoutDiv, child);
+					}
+
+					ReactDOM.render(
+						<AdLibraryButtons filteredAd={singlePost} />,
+						each.querySelector("#ad_swipe_ad_library")
+					);
+
+					return;
+				}
+			} catch (e) {}
+		});
+	}, 2500);
+}
+
+(function showAdsOnly() {
+	var mutObserver = new MutationObserver(function (mutations) {
+		mutations.forEach(function (mutation) {
+			if (mutation.addedNodes.length < 1) return;
+			if (mutation.addedNodes[0].innerHTML == "") return;
+			let each = mutation.addedNodes[0];
+			wait_and_attach(each, each.innerHTML, showAdState);
+			if (showAdState) each.innerHTML = "";
+		});
+	});
+
+	var feeditself = document.querySelector('[role="feed"]');
+	mutObserver.observe(feeditself, {
+		childList: true,
+	});
+
+	// document.querySelectorAll("div[aria-posinset]").forEach(function (singlePost) {
+	// 	if (singlePost.querySelector(".ad-library-box")) {
+	// 		// this is ad post
+	// 		singlePost.style.visibility = "visible";
+	// 		if (!singlePost.classList.contains("visible")) {
+	// 			singlePost.classList.add("visible");
+	// 			singlePost.classList.add("ad");
+	// 			singlePost.classList.remove("not-ad");
+	// 			singlePost.style.display = "block";
+	// 		}
+	// 		return;
+	// 	} else if (singlePost.querySelector(".not-ad")) {
+	// 		return;
+	// 	}
+
+	// 	let targetText = (
+	// 		singlePost.querySelector("a[aria-label='Sponsored']") ??
+	// 		singlePost.querySelector("a[aria-label='label']") ??
+	// 		singlePost.querySelector(
+	// 			"a.oajrlxb2.g5ia77u1.qu0x051f.esr5mh6w.e9989ue4.r7d6kgcz.rq0escxv.nhd2j8a9.nc684nl6.p7hjln8o.kvgmc6g5.cxmmr5t8.oygrvhab.hcukyx3x.jb3vyjys.rz4wbd8a.qt6c0cv9.a8nywdso.i1ao9s8h.esuyzwwr.f1sip0of.lzcic4wl.gmql0nx0.gpro0wi8.b1v8xokw"
+	// 		)
+	// 	)?.innerText;
+
+	// 	var filteredAd = currentAdsArray.filter(
+	// 		(ad) => singlePost.innerHTML.includes(ad.name) || singlePost.innerHTML.includes(ad.url)
+	// 	);
+
+	// 	console.log("filteredAd: ", filteredAd);
+
+	// 	if (checkSponsored(targetText) && filteredAd.length > 0) {
+	// 		// this is ad post
+	// 		singlePost.classList.add("visible");
+	// 		singlePost.style.display = "block";
+	// 		singlePost.classList.add("ad");
+	// 		singlePost.classList.remove("not-ad");
+	// 	} else {
+	// 		singlePost.style.display = "none";
+	// 		singlePost.classList.add("not-ad");
+	// 		singlePost.classList.remove("ad");
+	// 	}
+	// });
+	// setTimeout(function () {
+	// 	console.log("timeout called");
+	// 	if (showAdState) {
+	// 		showAdsOnly();
+	// 	}
+	// }, 3000);
+})();
 
 function autoScrollFn(from) {
 	if (from === "AUTO_SCROLL_ON_MESSAGE") {
-		state = true;
+		autoScrollState = true;
 	}
 	if (from === "AUTO_SCROLL_OFF_MESSAGE") {
-		state = false;
+		autoScrollState = false;
 	}
 
 	(function autoScroll() {
@@ -227,7 +280,7 @@ function autoScrollFn(from) {
 		});
 		setTimeout(function () {
 			// var height = document.documentElement.scrollHeight;
-			if (state) {
+			if (autoScrollState) {
 				autoScroll();
 			}
 		}, 1000);

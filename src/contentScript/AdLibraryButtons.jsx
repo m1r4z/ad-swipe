@@ -1,10 +1,10 @@
 const AdLibraryButtons = ({ filteredAd }) => {
-	let href = `https://www.facebook.com/ads/library/?active_status=all&ad_type=all&view_all_page_id=${filteredAd?.[0].page_id}`;
+	let href = `https://www.facebook.com/ads/library/?active_status=all&ad_type=all&view_all_page_id=${filteredAd?.page_id}`;
 
 	const handleOnClickSaveAd = (e) => {
 		window.dispatchEvent(
 			new CustomEvent("handleSaveAd", {
-				detail: JSON.stringify(filteredAd?.[0]),
+				detail: JSON.stringify(filteredAd),
 			})
 		);
 	};
@@ -36,7 +36,7 @@ const AdLibraryButtons = ({ filteredAd }) => {
 				</a>
 
 				<button
-					id={`save_ad_btn-${filteredAd?.[0]?.post_id}`}
+					id={`save_ad_btn-${filteredAd?.post_id}`}
 					onClick={handleOnClickSaveAd}
 					className="save_ad"
 					style={{
@@ -51,11 +51,11 @@ const AdLibraryButtons = ({ filteredAd }) => {
 						cursor: "pointer",
 						whiteSpace: "nowrap",
 					}}
-					disabled={filteredAd?.[0]?.isCollected}
+					disabled={filteredAd?.isCollected}
 				>
 					<span
-						className={`folder_icon-${filteredAd?.[0]?.post_id}`}
-						style={{ display: filteredAd?.[0]?.isCollected ? "none" : "inline-block" }}
+						className={`folder_icon-${filteredAd?.post_id}`}
+						style={{ display: filteredAd?.isCollected ? "none" : "inline-block" }}
 					>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -74,8 +74,8 @@ const AdLibraryButtons = ({ filteredAd }) => {
 						</svg>
 					</span>
 					<span
-						className={`folder_tick_icon-${filteredAd?.[0]?.post_id}`}
-						style={{ display: filteredAd?.[0]?.isCollected ? "inline-block" : "none" }}
+						className={`folder_tick_icon-${filteredAd?.post_id}`}
+						style={{ display: filteredAd?.isCollected ? "inline-block" : "none" }}
 					>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
