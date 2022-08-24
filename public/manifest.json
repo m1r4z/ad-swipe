@@ -1,15 +1,15 @@
 {
-	"manifest_version": 2,
+	"manifest_version": 3,
 	"version": "0.2.0",
 	"short_name": "Ad Swipe",
 	"name": "Ad Swipe",
 	"description": "Your one stop for all your Ad research, competition analysis and facebook advertising needs",
-	"browser_action": {
+	"action": {
 		"default_title": "Ad Swipe",
 		"default_popup": "popup.html"
 	},
 	"background": {
-		"scripts": ["background.bundle.js"]
+		"service_worker": "background.bundle.js"
 	},
 	"content_scripts": [
 		{
@@ -20,8 +20,15 @@
 	"icons": {
 		"192": "adswipe_icon.png"
 	},
-	"web_accessible_resources": ["img/*.png"],
+	"web_accessible_resources": [
+		{
+			"resources": ["img/star.png", "img/star2.png", "inject.js"],
+			"matches": ["https://*.facebook.com/*"]
+		}
+	],
 	"options_page": "options.html",
 	"permissions": ["activeTab", "tabs", "storage", "unlimitedStorage"],
-	"content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+	"content_security_policy": {
+		"extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+	}
 }
